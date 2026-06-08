@@ -1,0 +1,167 @@
+{
+  "_README": [
+    "Editable file with monthly Highlights & Lowlights for DAE dashboard.",
+    "Edit this file when a new month closes. Save it in the same folder as make_executive_summary.py.",
+    "When you run `python make_executive_summary.py`, it reads this file and updates the dashboard.",
+    "",
+    "STRUCTURE per month:",
+    "  highlights: array of {title, body}",
+    "  lowlights:  array of {title, body}",
+    "  pnl_notes:  optional extra notes per P&L line (Revenue commentary is auto-generated from Excel data).",
+    "",
+    "HTML allowed in body for formatting:",
+    "  <b>bold</b>",
+    "  <span class='g'>good number</span> (green)",
+    "  <span class='r'>bad number</span>  (red)",
+    "",
+    "Months use format Mmm-YY (e.g., May-26, Jun-26). To add a new month, copy any existing block and change the key.",
+    "",
+    "P&L Commentary is AUTO-GENERATED from your Excel using this framework:",
+    "  Revenue: closed at $X (X% MoM; X% vs Bud) driven by Revenue per Hour, Supply Hours, Trips/Hour, Price/Trip, Active Drivers, Hires/Churn",
+    "  Gross Profit: from Revenue + OPEX drivers (Driver Payments, Maintenance, Marketing, Uber Take Rate, etc.)",
+    "  EBITDA: from GP + SG&A drivers (Direct Business Line, Cross Func + Corp G&A, Payroll)",
+    "  Net Income: from EBITDA + D&A + Interest + Taxes",
+    "",
+    "You only fill highlights/lowlights. P&L commentary updates automatically when Excel data changes."
+  ],
+
+  "Jan-26": {
+    "highlights": [
+      {
+        "title": "Revenue Performance",
+        "body": "Closed at <b>MXN $52.9m</b> (-20.3% MoM; <span class='g'>+6.9% vs Budget</span>), driven by: Revenue per Hour -20.9% MoM ($207 vs $261.6) but <span class='g'>+12.5% vs Budget</span> ($207 vs $184) thanks to higher trips per hour (1.46 vs 1.40 Bud) and higher price per trip ($142.0 vs $131.3 Bud)."
+      },
+      {
+        "title": "Uber Co-Branding",
+        "body": "Received <b>3rd co-branding payment</b> from Uber totaling MXN $144k for January after achieving 100% of the 120 EVs target. Scaling to 240 co-branded EVs (100% of Feb target)."
+      },
+      {
+        "title": "World Cup Prep",
+        "body": "Active preparation for 2026 World Cup: (i) Vehicle Image Refurbishment + traceability; (ii) WC theme activation (hub branding + driver apparel); (iii) maximizing fleet availability through targeted OOS reduction; (iv) exploring Uber-VEMO joint demand-concentration strategies."
+      }
+    ],
+    "lowlights": [
+      {
+        "title": "Performance Ratio",
+        "body": "<span class='r'>+174 bps MoM</span> (73.0% vs 71.3%) but <span class='r'>-428 bps below Budget</span> (73.0% vs 77.2%). Supply hours +2.5% MoM (251,074 hrs vs 245,067) but -4.9% vs Budget."
+      },
+      {
+        "title": "Hiring",
+        "body": "603 hires (+27.5% MoM) driven by (i) Maria DAE recruiting AI agent (+30% higher conversion vs fully human process); (ii) lead generation provider delivered 9,107 leads (+55% MoM, +24% vs 2025 historical)."
+      }
+    ]
+  },
+
+  "Feb-26": {
+    "highlights": [
+      {
+        "title": "Revenue Performance",
+        "body": "Closed at <b>MXN $52.5m</b> (-0.8% MoM; <span class='g'>+9.7% vs Budget</span>). Revenue per Hour +4.6% MoM ($216.6 vs $207) and <span class='g'>+10.2% vs Budget</span>. Higher trips per hour 1.46 (vs 1.41 Bud) + higher price per trip $147.9 (vs $139.8 Bud), partly from 6 days of air quality government restrictions."
+      },
+      {
+        "title": "Hiring strong",
+        "body": "583 hires this month, continuing strong recruitment momentum."
+      },
+      {
+        "title": "Performance Ratio",
+        "body": "Increased <span class='g'>+405 bps MoM</span> (77.1% vs 73.0%), only <span class='r'>-38 bps below Budget</span> (77.1% vs 77.5%)."
+      }
+    ],
+    "lowlights": [
+      {
+        "title": "Churn QHSE Matrix",
+        "body": "Overall churn increased from 29.5% to <span class='r'>34.9%</span> (excl. DAE-LTO transitions). +40% churn driven by stricter QHSE Matrix (deliberate decision for safety standards, accident reduction, fleet condition)."
+      },
+      {
+        "title": "Supply Hours",
+        "body": "Decreased -4.7% MoM (239,344 vs 251,074) but +0.2% above Budget."
+      }
+    ]
+  },
+
+  "Mar-26": {
+    "highlights": [
+      {
+        "title": "Revenue Performance",
+        "body": "Closed at <b>MXN $53.4m</b> (<span class='g'>+1.7% MoM</span>; <span class='g'>+4.5% vs Budget</span>). YTD revenue <span class='g'>+7.0% vs Budget</span>."
+      },
+      {
+        "title": "Gross Profit YoY",
+        "body": "<span class='g'>+214.7% YoY</span> ($13.2m vs $4.2m Mar-25) and <span class='g'>+14.9% MoM</span> vs Feb-26 ($11.5m). YTD GP <span class='g'>+44.9%</span> vs Budget."
+      },
+      {
+        "title": "EBITDA YoY",
+        "body": "EBITDA $4.3m, <span class='g'>+164.8% YoY</span> vs ($6.7m) Mar-25. EBITDA margin <span class='g'>8.1%</span> vs (negative) prior year."
+      }
+    ],
+    "lowlights": [
+      {
+        "title": "Hiring",
+        "body": "Closed <span class='r'>-19.2% MoM</span> in hires (471 vs 583) despite record lead volume 10,408 (+45.8% MoM, highest in trailing 6 months). Lead Quality: only 22.6% of leads reached induction (vs 29.7% Feb, 35.0% Jan). Driving Test Filter: 432/1,077 candidates failed (40.1%) vs 18.9% in Feb. ~130 fewer hires."
+      },
+      {
+        "title": "Revenue per Hour",
+        "body": "<span class='r'>-8.8% MoM</span> ($197.4 vs $216.6) but <span class='g'>+3.3% vs Budget</span>."
+      }
+    ]
+  },
+
+  "Apr-26": {
+    "highlights": [
+      {
+        "title": "Revenue YTD",
+        "body": "YTD revenue $210.2m <span class='g'>+6.7% vs Budget</span> ($197.1m). YoY <span class='g'>+1.5%</span> vs Apr-25 ($50.6m)."
+      },
+      {
+        "title": "Gross Profit YTD",
+        "body": "<span class='g'>+21.2% vs Budget YTD</span> ($41.2m vs $34.0m)."
+      },
+      {
+        "title": "Lead Volume Record",
+        "body": "Second consecutive record month — <b>11,063 leads</b> (+6.3% MoM). Same-month hires +40% (leads generated and signed within April)."
+      },
+      {
+        "title": "EBITDA YTD",
+        "body": "EBITDA YTD <span class='g'>+175.8% vs Budget</span> ($2.3m vs Bud -$3.0m)."
+      }
+    ],
+    "lowlights": [
+      {
+        "title": "Performance Ratio",
+        "body": "Decreased <span class='r'>-420 bps MoM</span> (73.4% vs 77.6%) and <span class='r'>-437 bps vs Budget</span> (73.4% vs 77.8%). Supply hours -8.3% MoM (244,831 vs 267,053)."
+      },
+      {
+        "title": "Hiring",
+        "body": "Closed <span class='r'>-3.8% MoM</span> in hires (453 vs 471). Lead Quality: -41% decrease in hires from prior-month leads. Driving Test Filter: fail rate 40.5% (vs historical 19%) → net loss 158 drivers in March + 211 in April."
+      },
+      {
+        "title": "EBITDA Month",
+        "body": "EBITDA <span class='r'>($2.5m)</span> in April vs Budget ($1.3m) — <span class='r'>-95.5% vs Bud</span>. Driven by higher OPEX +13.0% MoM."
+      },
+      {
+        "title": "OPEX",
+        "body": "($44.3m) <span class='r'>-13.0% MoM</span> and <span class='r'>-9.5% vs Budget</span>. Driven by Driver Payments scaling and Maintenance."
+      },
+      {
+        "title": "Gross Profit Month",
+        "body": "$7.1m, <span class='r'>-50.3% MoM</span> ($14.2m → $7.1m) and <span class='r'>-13.0% vs Budget</span>."
+      }
+    ]
+  },
+
+  "_TEMPLATE_NEW_MONTH": {
+    "_comment": "Copy this block, rename key to e.g. 'May-26', fill in highlights & lowlights.",
+    "highlights": [
+      {
+        "title": "Example title (e.g. Revenue Performance)",
+        "body": "Closed at <b>MXN $X.Xm</b> (X% MoM; <span class='g'>+X% vs Budget</span>). Drivers: ..."
+      }
+    ],
+    "lowlights": [
+      {
+        "title": "Example title (e.g. Performance Ratio)",
+        "body": "<span class='r'>-X bps MoM</span> (X% vs X%). Cause: ..."
+      }
+    ]
+  }
+}
