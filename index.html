@@ -599,7 +599,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-06-09 10:18</div>
+  <div>build 2026-06-09 10:31</div>
 </footer>
 
 <script>
@@ -1590,7 +1590,12 @@ function makeLineChart(canvasId,label,data,opts){
     for(let i=LI+1;i<Math.min(LI+4,MAX_X);i++) proj[i]=ma;
     datasets.push({label:'Projection (3M MA)',data:proj,borderColor:'#7BDADA',backgroundColor:'rgba(123,218,218,0.15)',borderDash:[3,3],fill:false,tension:0.32,borderWidth:1.5,pointRadius:2,pointBackgroundColor:'#7BDADA'});
   }
-  const yr=smartYRange(main);
+  let yr=smartYRange(main);
+  // Si wideY (ej. gastos como OPEX/SG&A), forzar el eje desde 0 para que la
+  // volatilidad se vea contextualizada y no parezca exagerada.
+  if(opts.wideY && yr.min !== undefined && yr.max !== undefined){
+    yr = {min: 0, max: yr.max};
+  }
   return new Chart(ctx,{
     type:'line',data:{labels,datasets},
     options:{
@@ -1778,7 +1783,7 @@ function renderPLCharts(){
     const showBud=card.querySelector('[data-toggle="bud"]').checked;
     const showProj=card.querySelector('[data-toggle="proj"]').checked;
     if(charts[i]) charts[i].destroy();
-    charts[i]=makeLineChart('plc-'+i,ln.l,A,{budget:showBud?B:null,projection:showProj,yfmt:function(v){return fmtMm(v);}});
+    charts[i]=makeLineChart('plc-'+i,ln.l,A,{budget:showBud?B:null,projection:showProj,yfmt:function(v){return fmtMm(v);},wideY:!!ln.expense});
   }
   PL_LINES.forEach((_,i)=>build(i));
   root.querySelectorAll('input[type=checkbox]').forEach(cb=>{
