@@ -602,7 +602,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-06-09 16:48</div>
+  <div>build 2026-06-09 16:56</div>
 </footer>
 
 <script>
@@ -1594,10 +1594,45 @@ function makeLineChart(canvasId,label,data,opts){
     datasets.push({label:'Projection (3M MA)',data:proj,borderColor:'#7BDADA',backgroundColor:'rgba(123,218,218,0.15)',borderDash:[3,3],fill:false,tension:0.32,borderWidth:1.5,pointRadius:2,pointBackgroundColor:'#7BDADA'});
   }
   let yr=smartYRange(main);
-  // Si wideY (ej. gastos como OPEX/SG&A), forzar el eje desde 0 para que la
-  // volatilidad se vea contextualizada y no parezca exagerada.
   if(opts.wideY && yr.min !== undefined && yr.max !== undefined){
     yr = {min: 0, max: yr.max};
+  }
+  // === Segundo eje % para margenes (si marginData) ===
+  let scales = {
+    x:{ticks:{font:{family:'Space Grotesk',size:9},maxRotation:0,autoSkip:true,maxTicksLimit:14,color:'#888'},grid:{display:false}},
+    y:{min:yr.min,max:yr.max,ticks:{font:{family:'Space Grotesk',size:9},color:'#888',callback:opts.yfmt||undefined},grid:{color:'rgba(0,0,0,0.05)'}}
+  };
+  if(opts.marginData && opts.marginData.length){
+    // Agregar dataset de margin en eje secundario (yMargin)
+    const mSlice = (opts.marginData||[]).slice(0,MAX_X);
+    // truncar a actuales (LI+1) para no proyectar margen
+    const mFinal = mSlice.map((v,i) => i <= LI ? v : null);
+    datasets.push({
+      label:opts.marginLabel||'Margin %',
+      data:mFinal,
+      borderColor:'#117A45',
+      backgroundColor:'transparent',
+      borderDash:[2,3],
+      fill:false,
+      tension:0.30,
+      borderWidth:2,
+      pointRadius:2.5,
+      pointBackgroundColor:'#117A45',
+      pointBorderColor:'#117A45',
+      pointHoverRadius:5,
+      yAxisID:'yMargin'
+    });
+    const mr = smartYRange(mFinal);
+    scales.yMargin = {
+      position:'right',
+      min: mr.min, max: mr.max,
+      ticks:{
+        font:{family:'Space Grotesk',size:9},
+        color:'#117A45',
+        callback:function(v){ return (v).toFixed(0)+'%'; }
+      },
+      grid:{display:false}
+    };
   }
   return new Chart(ctx,{
     type:'line',data:{labels,datasets},
@@ -1608,10 +1643,7 @@ function makeLineChart(canvasId,label,data,opts){
         legend:{display:datasets.length>1,position:'bottom',labels:{font:{family:'Space Grotesk',size:10},boxWidth:14,padding:8}},
         tooltip:{enabled:true}
       },
-      scales:{
-        x:{ticks:{font:{family:'Space Grotesk',size:9},maxRotation:0,autoSkip:true,maxTicksLimit:14,color:'#888'},grid:{display:false}},
-        y:{min:yr.min,max:yr.max,ticks:{font:{family:'Space Grotesk',size:9},color:'#888',callback:opts.yfmt||undefined},grid:{color:'rgba(0,0,0,0.05)'}}
-      }
+      scales: scales
     }
   });
 }
@@ -1619,11 +1651,11 @@ function makeLineChart(canvasId,label,data,opts){
 const PL_LINES=[
   {k:'revenue',l:'Revenue'},
   {k:'opex',l:'Opex',expense:true},
-  {k:'gross_profit',l:'Gross Profit'},
+  {k:'gross_profit',l:'Gross Profit',marginKey:'gross_margin',marginLabel:'GP Margin %'},
   {k:'corporate_expenses',l:'SG&A',expense:true},
-  {k:'ebitda',l:'EBITDA'},
-  {k:'ebit',l:'EBIT'},
-  {k:'net_income',l:'Net Income'},
+  {k:'ebitda',l:'EBITDA',marginKey:'ebitda_margin',marginLabel:'EBITDA Margin %'},
+  {k:'ebit',l:'EBIT',marginKey:'ebit_margin',marginLabel:'EBIT Margin %'},
+  {k:'net_income',l:'Net Income',marginKey:'ni_margin',marginLabel:'NI Margin %'},
 ];
 
 // === Executive Summary: dropdown chart de Main KPIs ===
@@ -1786,7 +1818,23 @@ function renderPLCharts(){
     const showBud=card.querySelector('[data-toggle="bud"]').checked;
     const showProj=card.querySelector('[data-toggle="proj"]').checked;
     if(charts[i]) charts[i].destroy();
-    charts[i]=makeLineChart('plc-'+i,ln.l,A,{budget:showBud?B:null,projection:showProj,yfmt:function(v){return fmtMm(v);},wideY:!!ln.expense});
+    let mArr = null;
+    if(ln.marginKey){
+      const raw = arr(ln.marginKey);
+      mArr = (raw||[]).map(v => {
+        if(v == null) return null;
+        const num = +v;
+        // Si viene como ratio (<=1.5), multiplicar x100; si ya es %, usar tal cual
+        return Math.abs(num) <= 1.5 ? num*100 : num;
+      });
+    }
+    charts[i]=makeLineChart('plc-'+i,ln.l,A,{
+      budget:showBud?B:null,projection:showProj,
+      yfmt:function(v){return fmtMm(v);},
+      wideY:!!ln.expense,
+      marginData:mArr,
+      marginLabel:ln.marginLabel||'Margin %'
+    });
   }
   PL_LINES.forEach((_,i)=>build(i));
   root.querySelectorAll('input[type=checkbox]').forEach(cb=>{
