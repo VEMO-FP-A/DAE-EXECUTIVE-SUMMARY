@@ -321,6 +321,7 @@ body{font-family:'Space Grotesk',-apple-system,sans-serif;background:var(--bg);c
 .hl-card.ll .hd{background:linear-gradient(135deg,#1F5454 0%,#0F5454 100%)}
 .hl-card .item{padding:11px 16px;border-bottom:1px solid #f0f0f0;font-size:12.5px;line-height:1.5;color:#222;font-family:'Space Grotesk',sans-serif}
 .hl-card .item:last-child{border-bottom:none}
+.hl-g{color:#117A45;font-weight:600}.hl-r{color:#C0392B;font-weight:600}
 .hl-card .item .t{font-weight:700;color:var(--forest);margin-bottom:3px;display:flex;align-items:center;gap:6px}
 .hl-card .item .t::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--teal)}
 .hl-card.ll .item .t::before{background:#C0392B}
@@ -598,7 +599,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-06-09 10:04</div>
+  <div>build 2026-06-09 10:18</div>
 </footer>
 
 <script>
@@ -1519,8 +1520,8 @@ function smartYRange(series){
   const mn=Math.min(...v), mx=Math.max(...v), range=mx-mn;
   // Si todos los valores son iguales, dar un range mínimo
   if(range < 1e-9){ return {min: mn-1, max: mx+1}; }
-  // Padding mas tight: 6% del range + 1% del abs(max) como floor
-  const pad=Math.max(range*0.06,Math.abs(mx)*0.01);
+  // Padding tight: 3% del range, sin floor agresivo
+  const pad=Math.max(range*0.03,Math.abs(mx)*0.005);
   let min=mn-pad, max=mx+pad;
   // Si datos casi planos cerca de cero, no estirar tanto
   if(mn>=0&&range/Math.max(mx,1)<0.10) min=Math.max(0,mn-range*0.8);
@@ -1609,9 +1610,9 @@ function makeLineChart(canvasId,label,data,opts){
 
 const PL_LINES=[
   {k:'revenue',l:'Revenue'},
-  {k:'opex',l:'Opex'},
+  {k:'opex',l:'Opex',expense:true},
   {k:'gross_profit',l:'Gross Profit'},
-  {k:'corporate_expenses',l:'SG&A'},
+  {k:'corporate_expenses',l:'SG&A',expense:true},
   {k:'ebitda',l:'EBITDA'},
   {k:'ebit',l:'EBIT'},
   {k:'net_income',l:'Net Income'},
@@ -1766,7 +1767,13 @@ function renderPLCharts(){
   root.innerHTML=html;
   const charts={};
   function build(i){
-    const ln=PL_LINES[i]; const A=arr(ln.k), B=barr(ln.k);
+    const ln=PL_LINES[i];
+    let A=arr(ln.k), B=barr(ln.k);
+    // Si es expense, convertir a positivo para mejor lectura
+    if(ln.expense){
+      A = (A||[]).map(v => v==null ? null : Math.abs(+v||0));
+      B = (B||[]).map(v => v==null ? null : Math.abs(+v||0));
+    }
     const card=root.querySelectorAll('.chart-card')[i];
     const showBud=card.querySelector('[data-toggle="bud"]').checked;
     const showProj=card.querySelector('[data-toggle="proj"]').checked;
@@ -3627,16 +3634,36 @@ function renderMonthlyHL(){
   const m = sel.value;
   const data = MONTHLY_HL[m];
   if(!data){ gridEl.innerHTML = '<div style="grid-column:1/-1;color:#888;padding:20px;text-align:center">No data for '+m+'</div>'; return; }
-  // Highlights
+  // Helper para colorear numeros: highlights = verde, lowlights = rojo
+  function colorize(text, isGood){
+    if(!text) return '';
+    const cls = isGood ? 'hl-g' : 'hl-r';
+    let out = text;
+    // Patterns en orden de mas especifico a mas general:
+    // 1) Monto en parentesis (negativo): ($X.Xm), ($1,234)
+    out = out.replace(/(\(\$[\d,]+\.?\d*[mMkK]?\))/g, '<span class="'+cls+'">$1</span>');
+    // 2) Monto con simbolo de dolar: $X.Xm, $1,234
+    out = out.replace(/(\$[\d,]+\.?\d*[mMkK]?)/g, '<span class="'+cls+'">$1</span>');
+    // 3) Porcentajes con signo: +6.7%, -8.3%
+    out = out.replace(/([+\-]\d+\.?\d*%)/g, '<span class="'+cls+'">$1</span>');
+    // 4) Porcentajes sin signo: 73.4%, 19%
+    out = out.replace(/(?<![\d.])(\d+\.?\d*%)/g, '<span class="'+cls+'">$1</span>');
+    // 5) bps con signo: -420 bps, +250 bps
+    out = out.replace(/([+\-]?\d+\s*bps)/gi, '<span class="'+cls+'">$1</span>');
+    // 6) Numeros con signo explicito: +40, -158, +211
+    out = out.replace(/(?<![\d.>])([+\-]\d+(?:,\d{3})*(?:\.\d+)?)\b/g, '<span class="'+cls+'">$1</span>');
+    return out;
+  }
+  // Highlights (verde)
   let hl = '<div class="hl-card hl"><div class="hd">▲ Highlights</div>';
   data.highlights.forEach(function(h){
-    hl += '<div class="item"><div class="t">'+h.title+'</div><div>'+h.body+'</div></div>';
+    hl += '<div class="item"><div class="t">'+h.title+'</div><div>'+colorize(h.body, true)+'</div></div>';
   });
   hl += '</div>';
-  // Lowlights
+  // Lowlights (rojo)
   let ll = '<div class="hl-card ll"><div class="hd">▼ Lowlights</div>';
   data.lowlights.forEach(function(l){
-    ll += '<div class="item"><div class="t">'+l.title+'</div><div>'+l.body+'</div></div>';
+    ll += '<div class="item"><div class="t">'+l.title+'</div><div>'+colorize(l.body, false)+'</div></div>';
   });
   ll += '</div>';
   gridEl.innerHTML = hl + ll;
