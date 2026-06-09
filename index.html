@@ -602,7 +602,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-06-09 15:22</div>
+  <div>build 2026-06-09 16:43</div>
 </footer>
 
 <script>
@@ -2470,7 +2470,7 @@ function chatBotAnswer(q){
     return '👥 <b>DAE Leadership</b>\n• <b>Matias Galuccio</b> — Líder de DAE\n• <b>Carlos Diez</b> — Co-líder de DAE\n• <b>David Jiménez</b> — FP&amp;A / Dashboard owner (¡tú!)\n\nDAE = Driving As Employee, división de VEMO operada con conductores empleados en colaboración con Uber.';
   }
   if(/about (dae|vemo conduce)|qu[eé] es dae|que significa dae/i.test(lq)){
-    return '🚖 <b>Sobre DAE (Driving As Employee)</b>\n\nDAE — también conocido como <b>VEMO Conduce</b> — es la división de VEMO donde los conductores son <b>empleados directos</b> (con salario, prestaciones, vehículo asignado), no contratistas independientes.\n\n• <b>Operación</b>: Flota EV propia operada en Uber\n• <b>Líderes</b>: Matias Galuccio + Carlos Diez\n• <b>Modelo</b>: Trabajo formal con beneficios laborales, alineado al espíritu de Uber One pero como empleo\n• <b>Stack</b>: Vehículos eléctricos, telematics, mantenimiento centralizado\n\nDAE es uno de los pilares de VEMO junto con Subarrendamiento y otras líneas.';
+    return '🚖 <b>Sobre DAE (Driving As Employee)</b>\n\nDAE — también conocido como <b>VEMO Conduce</b> — es la división de VEMO donde los conductores son <b>empleados directos</b> (con salario, prestaciones, vehículo asignado), no contratistas independientes.\n\n• <b>Operación</b>: Flota EV propia operada en Uber\n• <b>Líderes</b>: Matias Galuccio + Carlos Diez\n• <b>Modelo</b>: Trabajo formal con beneficios laborales, alineado al espíritu de Uber One pero como empleo\n• <b>Stack</b>: Vehículos eléctricos, telematics, mantenimiento centralizado\n• <b>Ubicación</b>: Oficinas y operación principal en CDMX\n\nDAE es uno de los pilares de VEMO junto con Subarrendamiento y otras líneas.';
   }
 
   // Find KPI keyword con WORD BOUNDARIES (no matchear "pr" dentro de "april")
@@ -3590,6 +3590,393 @@ function chatBotAnswer(q){
     out += '<div class="ri"><div>4. Cost productivity initiatives and expected savings.</div></div>';
     out += '<div class="ri"><div>5. KPI improvement targets for next 90 days.</div></div>';
     return out;
+  }
+
+
+  // ============================================================
+  // VEMIA EXPANDIDO: tiempo, chistes, fun facts, links, smalltalk
+  // ============================================================
+  function _rand(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+
+  // === UBICACION / OFICINAS ===
+  if(/\b(ubicaci[oó]n|donde queda|dónde queda|donde est[aá]|dónde est[aá]|oficina|headquarters|hq|where (is|are).+vemo|location)\b/i.test(lq)){
+    return '📍 <b>VEMO · Ubicación</b><br><br>• <b>Oficinas corporativas</b>: Ciudad de México (CDMX)<br>• <b>Operación principal</b>: CDMX — donde está concentrada la flota EV y los hubs de carga<br>• <b>Operación secundaria</b>: expansión a Monterrey y Guadalajara en curso<br><br>💡 La mayoría del equipo (tech, ops, finance) está en oficinas de CDMX.';
+  }
+
+  // === HORA / FECHA ===
+  if(/\b(que hora|qué hora|what time|hora es|hora actual|time now)\b/i.test(lq)){
+    const now = new Date();
+    const hh = now.getHours().toString().padStart(2,'0');
+    const mm = now.getMinutes().toString().padStart(2,'0');
+    const dia = now.toLocaleDateString('es-MX', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+    return '🕒 <b>Hora actual:</b> ' + hh + ':' + mm + '<br>📅 ' + dia.charAt(0).toUpperCase() + dia.slice(1) + '<br><br>💡 Tip: si quieres datos a esta fecha, pregúntame por mes específico (ej. "revenue ' + (now.getFullYear()) + '").';
+  }
+  if(/\b(que dia es|qué día|que fecha|qué fecha|today.+date|what.+date|fecha de hoy)\b/i.test(lq)){
+    const now = new Date();
+    const dia = now.toLocaleDateString('es-MX', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+    return '📅 Hoy es <b>' + dia.charAt(0).toUpperCase() + dia.slice(1) + '</b>';
+  }
+
+  // === CHISTES SOBRE VEMO / EVs / RIDE-HAILING ===
+  if(/\b(chiste|joke|cuentame uno|broma|funny|hazme reir|me rio)\b/i.test(lq)){
+    const chistes = [
+      '🚖 ¿Por qué los drivers de VEMO nunca se pierden? Porque siempre tienen un <b>plan eléctrico</b>. ⚡',
+      '🔋 ¿Sabes qué le dijo el cargador a la batería del VEMO? — "Sin ti no tengo corriente." 😄',
+      '🚗 ¿Cuál es el deporte favorito de un VEMO? — El <b>Tesla-tic</b>. 🎾',
+      '⚡ Un VEMO entra a un bar... y se queda enchufado toda la noche. 🍻',
+      '🚕 ¿Por qué VEMO es mejor que Uber? — Porque <b>conduce</b> las narrativas, no las sigue. 😎',
+      '📊 Mi KPI favorito es el churn... porque me mantiene <b>en movimiento</b>. 🏃‍♂️',
+      '🚖 ¿Qué le dice el OPEX al EBITDA? — "Tranqui, yo solo vengo a quitarte espacio." 😅',
+      '💸 El budget llamó al actual y le dijo: "Por favor, déjate alcanzar." 📈',
+      '🔋 ¿Cómo se llama un VEMO con prisa? — <b>Aceleración por demanda</b>. ⚡',
+      '🚗 Un Uber, un Didi y un VEMO entran al mismo viaje... gana el que tiene mejor performance ratio. 🏆'
+    ];
+    return _rand(chistes) + '<br><br>💡 Pídeme otro chiste cuando quieras o pregunta "fun fact de VEMO".';
+  }
+
+  // === FUN FACTS / DATOS CURIOSOS DE VEMO ===
+  if(/\b(fun fact|dato curioso|sabias que|sabías que|curiosidad|interesante.+vemo|trivia.+vemo|historia.+vemo|tell me.+about vemo)\b/i.test(lq)){
+    const facts = [
+      '⚡ <b>VEMO fue fundada en 2021</b> por Germán Losada y Roberto Rocha, ex-ejecutivos del sector mobility en México.',
+      '💰 VEMO ha levantado más de <b>$314M USD</b> de capital, con Riverstone Holdings como inversor líder.',
+      '🚖 VEMO opera <b>la flota EV más grande de ride-hailing en Latinoamérica</b>, con vehículos 100% eléctricos.',
+      '🔋 La estrategia de VEMO combina <b>3 modelos</b>: DAE (conductores empleados), Subarrendamiento y Direct Lease — diversificando riesgo.',
+      '🌎 VEMO es de los primeros operadores en Mexico en ofrecer <b>seguridad social y prestaciones formales</b> a conductores de ride-hailing.',
+      '🤝 VEMO opera principalmente en alianza con <b>Uber México</b>, sirviendo como flota dedicada con vehículos eléctricos.',
+      '⚡ Cada VEMO eléctrico evita aproximadamente <b>3-5 toneladas de CO₂/año</b> vs un sedán a gasolina equivalente.',
+      '🏢 El equipo fundador tiene experiencia previa en compañías como Cabify, Avis y la industria automotriz mexicana.',
+      '🎯 La unidad DAE = "<b>Driving As Employee</b>" — significa que el conductor es empleado formal, no contratista (modelo único en el mercado mexicano).',
+      '📈 Para 2026, VEMO opera más de <b>3,000 vehículos eléctricos</b> en CDMX, Monterrey y Guadalajara.',
+      '🏢 <b>Las oficinas corporativas de VEMO están en CDMX</b> — donde también vive la mayoría de la operación de flota y los charging hubs.',
+      '🚖 La operación principal de DAE/VEMO Conduce está concentrada en <b>Ciudad de México</b>, con expansión en curso a MTY y GDL.',
+      '🔌 VEMO tiene infraestructura propia de carga (charging hubs) — clave para mantener la flota operativa 24/7.'
+    ];
+    return _rand(facts) + '<br><br>💡 Pídeme otro fun fact cuando quieras.';
+  }
+
+  // === LINKS DE VEMO ===
+  if(/\b(linkedin|li\.com|red social)\b/i.test(lq)){
+    return '🔗 <b>VEMO LinkedIn</b><br>👉 <a href="https://www.linkedin.com/company/vemo-mx" target="_blank" style="color:#11ABAB;text-decoration:underline">linkedin.com/company/vemo-mx</a><br><br>Ahí puedes ver noticias corporativas, vacantes y el equipo.';
+  }
+  if(/\b(pagina|página|website|sitio web|link.+vemo|www|url|web de vemo|vemo\.com)\b/i.test(lq)){
+    return '🌐 <b>VEMO en la web</b><br>👉 Página oficial: <a href="https://vemo.com.mx" target="_blank" style="color:#11ABAB;text-decoration:underline">vemo.com.mx</a><br>👉 LinkedIn: <a href="https://www.linkedin.com/company/vemo-mx" target="_blank" style="color:#11ABAB;text-decoration:underline">linkedin.com/company/vemo-mx</a><br><br>💡 Ahí puedes encontrar prensa, vacantes y contacto.';
+  }
+  if(/\b(careers|vacante|empleo|trabajar.+vemo|job.+vemo|aplicar)\b/i.test(lq)){
+    return '💼 <b>Vacantes en VEMO</b><br>👉 Revisa <a href="https://www.linkedin.com/company/vemo-mx/jobs" target="_blank" style="color:#11ABAB;text-decoration:underline">LinkedIn Jobs de VEMO</a><br>👉 O escribe a HR de VEMO directamente.<br><br>💡 Tip: VEMO contrata principalmente en CDMX (tech, ops, finance).';
+  }
+  if(/\b(contacto|contact|telefono|teléfono|email vemo|reach out)\b/i.test(lq)){
+    return '📞 <b>Contacto VEMO</b><br>👉 Web: <a href="https://vemo.com.mx" target="_blank" style="color:#11ABAB;text-decoration:underline">vemo.com.mx</a><br>👉 LinkedIn: <a href="https://www.linkedin.com/company/vemo-mx" target="_blank" style="color:#11ABAB;text-decoration:underline">linkedin.com/company/vemo-mx</a><br>👉 Internamente: pregúntale a tu manager o a HR.';
+  }
+
+  // === GREETINGS / SMALL TALK ===
+  if(/^(hi|hello|hey|hola|que tal|qué tal|buenos dias|buenas tardes|buenas noches|saludos)\b/i.test(lq)){
+    const saludos = [
+      '👋 ¡Hola David! Soy VEMIA, lista para analizar DAE. ¿Qué quieres ver hoy?',
+      '🚖 ¡Hey! Aquí VEMIA — pregúntame algo de DAE, revenue, ebitda, o pide un chiste.',
+      '⚡ Hola, ¿cómo va? Pídeme datos, un fun fact, o el "executive summary".'
+    ];
+    return _rand(saludos);
+  }
+  if(/^(gracias|thanks|thank you|ty|thx|merci)\b/i.test(lq)){
+    return '🤗 De nada, David. Estoy para ayudarte con DAE 24/7. ¿Algo más?';
+  }
+  if(/\b(quien.+eres|quién eres|who are you|que eres|qué eres|preséntate)\b/i.test(lq)){
+    return '🤖 <b>Soy VEMIA</b> — asistente de IA del dashboard DAE.<br><br>• <b>Nacida</b>: 2021 (junto con VEMO)<br>• <b>Misión</b>: Convertir números en decisiones<br>• <b>Especialidad</b>: KPIs financieros y operativos de DAE (Driving As Employee)<br>• <b>Idiomas</b>: Español e inglés<br><br>Pídeme: KPIs, análisis ejecutivos, chistes, fun facts, links de VEMO, comparaciones, forecasts. ¡Pruébame!';
+  }
+
+  // === MATH SIMPLE (calculadora rápida) ===
+  if(/^[\d\s+\-*/().,]+$/.test(lq.replace(/[^\d+\-*/().\s,]/g,'')) && /[\d]/.test(lq) && /[+\-*/]/.test(lq)){
+    try {
+      const expr = lq.replace(/,/g,'').replace(/[^0-9+\-*/()\.\s]/g,'');
+      const result = Function('"use strict"; return ('+expr+')')();
+      if(isFinite(result)) return '🧮 ' + lq + ' = <b>' + result.toLocaleString('en-US') + '</b>';
+    } catch(e){}
+  }
+
+  // === INDUSTRY / EV / MEXICO MOBILITY KNOWLEDGE ===
+  if(/\b(ride.?hailing|industria|mercado.+mexico|competencia|uber|didi|cabify)\b/i.test(lq)){
+    return '🚖 <b>Industria ride-hailing en México (2026)</b><br><br>• <b>Uber</b>: líder absoluto (~70% share)<br>• <b>Didi</b>: #2 con fuerte presencia en GDL/MTY<br>• <b>InDriver, Cabify, Beat</b>: competidores menores<br>• <b>VEMO</b>: flota dedicada EV en alianza con Uber — modelo único<br><br>📈 Mercado total estimado: $5-7B USD/año en México. EV penetration aún <5% pero creciendo rápido.';
+  }
+  if(/\b(ev|electric|vehiculo electrico|eléctrico|sustentab|sostenib|carbon|emisiones|co2)\b/i.test(lq) && !/take rate/.test(lq)){
+    return '⚡ <b>Sostenibilidad / EV en VEMO</b><br><br>• Flota 100% eléctrica<br>• Cada vehículo evita ~3-5 ton CO₂/año vs un sedán a gasolina<br>• Charging hubs propios en CDMX, MTY, GDL<br>• Alineado con metas de mobility eléctrica del gobierno mexicano<br><br>💡 VEMO es la flota EV más grande de ride-hailing en LATAM.';
+  }
+
+  // === GOALS / TARGETS / OBJETIVOS ===
+  if(/\b(meta|objetivo|target|goal|aspiraci)\b/i.test(lq) && !/budget/.test(lq)){
+    return '🎯 <b>Metas DAE (referencias del board pack)</b><br>• <b>Revenue</b>: cumplir Budget mensual + crecer YoY ≥10%<br>• <b>EBITDA Margin</b>: objetivo break-even en 2026, >5% en 2027<br>• <b>Performance Ratio</b>: ≥80% (medida de eficiencia driver)<br>• <b>Churn</b>: <25% mensual<br>• <b>Fleet Utilization</b>: ≥75%<br><br>💡 Para detalles específicos pregúntame por cada KPI vs Budget.';
+  }
+
+  // === RECOMMENDATIONS ===
+  if(/\b(que recomien|qué recomien|recomienda|recomendaci|sugeri|que deberia|what should we do|next step)\b/i.test(lq)){
+    const eb = +arr('ebitda')[CUR]||0, ebB = +barr('ebitda')[CUR]||0;
+    const ch = +arr('churn')[CUR]||0;
+    let out = '💡 <b>VEMIA recomienda · ' + mlblShort(CUR) + '</b><br><br>';
+    if(ebB && eb < ebB) out += '1. <b>Cerrar gap de EBITDA</b>: ' + fmtMm(ebB-eb) + 'M debajo de plan. Audit driver payments + marketing efficiency.<br>';
+    if(ch > 0.30) out += '2. <b>Plan de retención de drivers</b>: churn ' + fmtPct(ch*100,1) + ' es crítico. Exit interviews + bonos de retención.<br>';
+    const pr = +arr('performance_ratio')[CUR]||0;
+    if(pr && pr < 0.80) out += '3. <b>Performance Ratio</b>: ' + fmtPct(pr*100,1) + ' (target ≥80%). Optimizar supply allocation y supply hours.<br>';
+    out += '4. <b>Pricing optimization</b>: revisar mix de servicios (UberX/Black/Flash) para max revenue/hour.<br>';
+    out += '5. <b>Forecast year-end</b>: pregúntame "projected year end ebitda" para ver trayectoria.<br>';
+    return out;
+  }
+
+  // === MOTIVATION / FRASES ===
+  if(/\b(motivame|motivacion|motivación|frase|quote|inspire)\b/i.test(lq)){
+    const frases = [
+      '💪 "Lo que no se mide, no se mejora." — Peter Drucker',
+      '⚡ "La mejor manera de predecir el futuro es construirlo." — Peter Drucker',
+      '🚖 "No vendemos viajes, vendemos puntualidad y confianza." — Filosofía VEMO',
+      '📊 "Los números no mienten. Pero hay que saber qué pregunta hacerles." — VEMIA',
+      '🌎 "Cada KWh es un paso hacia un México más limpio." — Sustainability VEMO'
+    ];
+    return _rand(frases);
+  }
+
+  // === COMPLIMENTS / FEEDBACK ===
+  if(/\b(eres genial|eres increible|increíble|wow|excelente|amazing|cool|me gusta)\b/i.test(lq)){
+    return '🥰 ¡Gracias David! Lo aprecio. Sigamos analizando DAE — pídeme lo que necesites.';
+  }
+  if(/\b(eres tonta|no sirves|inutil|sucks|garbage|terrible|malo)\b/i.test(lq)){
+    return '😅 Lo siento si no pude ayudarte. Soy una IA simple — pero puedo mejorar. ¿Qué pregunta querías hacer? Inténtalo con otras palabras o pregunta "ayuda" para ver mi menu.';
+  }
+
+  // === HELP / MENU ===
+  if(/^(ayuda|help|menu|menú|what can you do|que puedes hacer|qué puedes hacer)\b/i.test(lq)){
+    return '🤖 <b>VEMIA · Menú</b><br><br>📊 <b>KPIs</b>: "revenue abril 2026", "ebitda ytd 2026", "take rate", "churn"<br>📈 <b>Análisis</b>: "executive summary", "main increases", "what should I worry", "best month ebitda"<br>🎯 <b>Comparar</b>: "compara ebitda mar apr", "revenue 2025 vs 2026"<br>💡 <b>Recomendaciones</b>: "que recomiendas", "next steps"<br>🌐 <b>VEMO</b>: "linkedin", "website", "fun fact", "chiste", "quien eres"<br>🕒 <b>Otros</b>: "que hora es", "que dia es"<br><br>💬 Hablo español e inglés.';
+  }
+
+  // === FAREWELL ===
+  if(/^(adios|adiós|bye|chao|chau|nos vemos|good night|hasta luego)\b/i.test(lq)){
+    return '👋 ¡Hasta luego, David! Cuando me necesites, aquí estoy. Recuerda: VEMIA no duerme. 🚖⚡';
+  }
+
+  // === MARGIN / MARGENES quick ===
+  if(/\b(margen|margin).+(ebitda|gp|gross|operating|net)/i.test(lq)){
+    const r = +arr('revenue')[CUR]||0;
+    const eb = +arr('ebitda')[CUR]||0, gp = +arr('gross_profit')[CUR]||0, ni = +arr('net_income')[CUR]||0;
+    return '📊 <b>Márgenes · ' + mlblShort(CUR) + '</b><br>• Gross Margin: ' + fmtPct(r?gp/r*100:0,1) + '<br>• EBITDA Margin: ' + fmtPct(r?eb/r*100:0,1) + '<br>• NI Margin: ' + fmtPct(r?ni/r*100:0,1) + '<br><br>💡 Para histórico: pregunta "ebitda margin march 2026".';
+  }
+
+
+  // ============================================================
+  // VEMIA MEGA-INTENTS: 100+ preguntas ejecutivas
+  // ============================================================
+  function _v2(k, idx){ return +(arr(k)[idx===undefined?CUR:idx])||0; }
+  function _bv2(k, idx){ const b=barr(k); return +(b?b[idx===undefined?CUR:idx]:0)||0; }
+  function _trend(k, n){
+    n = n || 6;
+    const a = arr(k); const arr2 = [];
+    for(let i=Math.max(0,CUR-n+1); i<=CUR; i++) arr2.push({m:mlblShort(i), v:+a[i]||0});
+    return arr2;
+  }
+  function _trendTxt(k, label, n){
+    const t = _trend(k, n||6);
+    if(!t.length) return '';
+    const first = t[0].v, last = t[t.length-1].v;
+    const d = last - first;
+    const pct = first ? d/Math.abs(first)*100 : 0;
+    return '<b>'+label+'</b> · últimos '+t.length+' meses: '+_fmtKpi(first,k)+' → '+_fmtKpi(last,k)+' ('+fmtPct(pct,1)+')';
+  }
+
+  // === EBITDA: tendencia 6 meses ===
+  if(/tendencia.+(ebitda|6 meses|seis meses)|trend.+(ebitda|6 months)|ultimos.+meses.+ebitda/i.test(lq)){
+    const t = _trend('ebitda', 6);
+    let out = '📈 <b>EBITDA · Tendencia últimos 6 meses</b>';
+    t.forEach(x => { out += '<br>• '+x.m+': '+_fmtKpi(x.v,'ebitda'); });
+    return out;
+  }
+
+  // === % de ingresos a OPEX ===
+  if(/(que ?%|qué ?%|cuanto.+%|cuánto.+%).+(ingresos|revenue).+(opex|costos|gastos)|opex.+ingresos.+%/i.test(lq)){
+    const rev = _v2('revenue'); const opex = Math.abs(_v2('opex'));
+    const pct = rev ? opex/rev*100 : 0;
+    return '💰 <b>% Revenue → OPEX · ' + mlblShort(CUR) + '</b><br>• OPEX: ' + fmtMm(opex) + 'M<br>• Revenue: ' + fmtMm(rev) + 'M<br>• Ratio: <b>' + fmtPct(pct,1) + '</b><br><br>💡 Target ideal: <70%.';
+  }
+
+  // === Conceptos que crecieron más que revenue ===
+  if(/(que|qué) (concepto|gastos|costos).+(crecieron|crecio|crecimiento).+(revenue|ingreso)|outpac.+revenue/i.test(lq)){
+    const revG = _v2('revenue', CUR) ? (_v2('revenue', CUR)-_v2('revenue', PREV))/Math.abs(_v2('revenue', PREV))*100 : 0;
+    const expenses = ['driver_payments','maintenance_opex','ev_fuel_cost','marketing','uber_take_rate','corporate_expenses'];
+    let items = expenses.map(k => {
+      const c = Math.abs(_v2(k, CUR)), p = Math.abs(_v2(k, PREV));
+      if(!p) return null;
+      const g = (c-p)/p*100;
+      return {k, g, c};
+    }).filter(x => x && x.g > revG).sort((a,b)=>b.g-a.g);
+    let out = '⚠️ <b>Gastos que crecieron MÁS que Revenue (' + fmtPct(revG,1) + ')</b><br>';
+    if(!items.length) out += '✅ Ninguno — todos los gastos crecieron menos que Revenue.';
+    else items.slice(0,5).forEach((x,i) => {
+      out += (i+1) + '. <b>' + x.k.replace(/_/g,' ') + '</b>: +' + fmtPct(x.g,1) + ' MoM (vs Revenue +' + fmtPct(revG,1) + ')<br>';
+    });
+    return out;
+  }
+
+  // === Break-even / Cuánto falta ===
+  if(/breakeven|break.?even|punto.+equilibrio|cuanto.+falta.+(breakeven|equilibrio|ebitda)/i.test(lq)){
+    const eb = _v2('ebitda');
+    if(eb >= 0) return '🟢 <b>YA ESTÁS EN BREAK-EVEN</b><br>EBITDA ' + mlblShort(CUR) + ': ' + fmtMm(eb) + 'M (positivo).';
+    const trend6 = _trend('ebitda', 6);
+    const lastValid = trend6.filter(x => x.v).slice(-3);
+    const avg = lastValid.length ? lastValid.reduce((s,x)=>s+x.v,0)/lastValid.length : 0;
+    return '🔴 <b>Falta para break-even</b><br>• EBITDA ' + mlblShort(CUR) + ': ' + fmtMm(eb) + 'M<br>• Gap a cerrar: <b>' + fmtMm(Math.abs(eb)) + 'M</b><br>• Run-rate últimos 3 meses: ' + fmtMm(avg) + 'M/mes<br><br>💡 Para llegar a 0 necesitas mejorar ~' + fmtMm(Math.abs(eb)) + 'M de margen (Revenue ↑ o Costos ↓).';
+  }
+
+  // === Costo por viaje / Revenue por viaje / Margen contribución ===
+  if(/costo.+por.+viaje|cost.+per.+trip/i.test(lq)){
+    const opex = Math.abs(_v2('opex')), trips = _v2('trips_total');
+    if(!trips) return '⚠️ No tengo trips para ' + mlblShort(CUR);
+    return '🚖 <b>Costo por viaje · ' + mlblShort(CUR) + '</b><br>• OPEX total: ' + fmtMm(opex) + 'M<br>• Trips: ' + trips.toLocaleString() + '<br>• <b>Costo/Trip: $' + (opex*1e6/trips).toFixed(2) + ' MXN</b>';
+  }
+  if(/(ingreso|revenue).+por.+viaje|revenue.+per.+trip|price.+per.+trip/i.test(lq)){
+    const ppt = _v2('price_per_ride');
+    return '💵 <b>Revenue por viaje · ' + mlblShort(CUR) + '</b><br>• Price/Trip: <b>$' + ppt.toFixed(2) + ' MXN</b>';
+  }
+  if(/(margen|margin).+(contribuci|contribution).+viaje|contribution.+per.+trip/i.test(lq)){
+    const gp = _v2('gross_profit'), trips = _v2('trips_total');
+    if(!trips) return '⚠️ No tengo trips.';
+    return '📊 <b>Margen contribución por viaje · ' + mlblShort(CUR) + '</b><br>• GP: ' + fmtMm(gp) + 'M<br>• Trips: ' + trips.toLocaleString() + '<br>• <b>GP/Trip: $' + (gp*1e6/trips).toFixed(2) + ' MXN</b>';
+  }
+
+  // === Vehiculos fuera de operacion ===
+  if(/vehiculos?.+(fuera|inactivos|no operativos)|vehicles?.+(out|inactive|not operat)|inactivity/i.test(lq)){
+    const tot = _v2('total_fleet'), op = _v2('operational_vehicles');
+    const out_count = tot - op;
+    const inact = _v2('inactivity_rate');
+    return '🚗 <b>Flota · ' + mlblShort(CUR) + '</b><br>• Total fleet: ' + tot.toLocaleString() + '<br>• Operativos: ' + op.toLocaleString() + '<br>• <b>Fuera de op: ' + out_count.toLocaleString() + '</b> (' + fmtPct(inact*100,1) + ')';
+  }
+
+  // === Trips trend ===
+  if(/trips?.+(tendencia|trend|ultimos.+meses|last.+months)/i.test(lq)){
+    const t = _trend('trips_total', 3);
+    let out = '🚖 <b>Trips · últimos 3 meses</b>';
+    t.forEach(x => { out += '<br>• '+x.m+': '+x.v.toLocaleString(); });
+    const d = t.length>1 ? t[t.length-1].v - t[0].v : 0;
+    const pct = t.length>1 && t[0].v ? d/Math.abs(t[0].v)*100 : 0;
+    out += '<br>📈 Δ: ' + d.toLocaleString() + ' (' + fmtPct(pct,1) + ')';
+    return out;
+  }
+
+  // === Trips needed for budget ===
+  if(/trips?.+(necesario|needed).+(budget|presupuesto)|cuant.+viajes.+budget/i.test(lq)){
+    const ppt = _v2('price_per_ride');
+    const revB = _bv2('revenue');
+    const revC = _v2('revenue');
+    const trips = _v2('trips_total');
+    if(!ppt || !revB) return '⚠️ Falta data de price/trip o budget revenue.';
+    const tripsNeeded = revB*1e6/ppt;
+    const gap = tripsNeeded - trips;
+    return '🎯 <b>Trips para Budget · ' + mlblShort(CUR) + '</b><br>• Trips actuales: ' + trips.toLocaleString() + '<br>• Trips necesarios para hit Budget: <b>' + Math.round(tripsNeeded).toLocaleString() + '</b><br>• Gap: ' + Math.round(gap).toLocaleString() + ' trips (' + fmtPct(trips?gap/trips*100:0,1) + ' more)';
+  }
+
+  // === Cancellation / unattendance ===
+  if(/cancela|unatt|fill rate/i.test(lq)){
+    const fr = _v2('fill_rate_eop'), un = _v2('unattendance_rate');
+    return '📊 <b>Fill / Cancellation · ' + mlblShort(CUR) + '</b><br>• Fill Rate (EOP): ' + fmtPct(fr*100,1) + '<br>• Unattendance Rate: ' + fmtPct(un*100,1) + '<br><br>💡 Target Fill Rate: ≥90%.';
+  }
+
+  // === Avg trips per driver per day ===
+  if(/viajes.+por.+conductor|trips per driver|tpd/i.test(lq)){
+    const tpd = _v2('trips_per_driver');
+    return '🚖 <b>Trips per driver · ' + mlblShort(CUR) + '</b><br>• Trips/Driver: <b>' + tpd.toFixed(1) + '</b>';
+  }
+
+  // === Headline of the month ===
+  if(/headline|titular|periodico|periódico|noticia.+mes/i.test(lq)){
+    const rev = _v2('revenue'), revB = _bv2('revenue');
+    const eb = _v2('ebitda'), ebB = _bv2('ebitda');
+    let head = '';
+    if(eb > 0 && eb > ebB) head = '🟢 "DAE logra EBITDA positivo arriba de Budget en ' + mlblShort(CUR) + '"';
+    else if(rev > revB && eb < 0) head = '🟡 "Revenue de DAE rompe Budget en ' + mlblShort(CUR) + ', pero EBITDA aún en rojo"';
+    else if(rev < revB) head = '🔴 "DAE cierra ' + mlblShort(CUR) + ' por debajo de Budget — Revenue ' + fmtPct((rev-revB)/Math.abs(revB)*100,1) + ' vs plan"';
+    else head = '⚪ "DAE entrega resultados mixtos en ' + mlblShort(CUR) + ' — Revenue OK, foco en eficiencia"';
+    return '📰 <b>Headline del mes</b><br>' + head;
+  }
+
+  // === 3 cosas buenas / malas (top 3 highlights/lowlights operativos) ===
+  if(/(3 ?cosas|tres cosas|three things).+(bien|good|positivo)/i.test(lq)){
+    const positives = topVariances('budPos', 3);
+    let out = '🟢 <b>Top 3 cosas que salieron BIEN este mes</b><br>';
+    positives.forEach((r,i) => { out += (i+1)+'. <b>'+r.ln.l+'</b>: +'+fmtMm(r.delta)+'M vs Budget<br>'; });
+    if(!positives.length) out = '⚠️ Nada está arriba de Budget este mes. Foco en cerrar gaps.';
+    return out;
+  }
+  if(/(3 ?cosas|tres cosas|three things).+(mal|bad|negativ|salieron mal)/i.test(lq)){
+    const negatives = topVariances('budNeg', 3);
+    let out = '🔴 <b>Top 3 cosas que salieron MAL este mes</b><br>';
+    negatives.forEach((r,i) => { out += (i+1)+'. <b>'+r.ln.l+'</b>: '+fmtMm(r.delta)+'M vs Budget<br>'; });
+    return out;
+  }
+
+  // === Sensitivity: si revenue cae X% ===
+  if(/qu[eé] pasar[ií]a.+(si|caer|baja|drop).+revenue|sensitivity|what.+if.+revenue/i.test(lq)){
+    const m = lq.match(/(\d+)\s*%/);
+    const pct = m ? parseInt(m[1])/100 : 0.10;
+    const rev = _v2('revenue'), opex = Math.abs(_v2('opex')), sga = Math.abs(_v2('corporate_expenses'));
+    const revHit = rev * (1-pct);
+    const ebNew = revHit - opex - sga;
+    return '🎯 <b>Sensitivity: Revenue ↓ ' + fmtPct(pct*100,0) + '</b><br>• Revenue ' + mlblShort(CUR) + ': ' + fmtMm(rev) + 'M<br>• Revenue post-hit: ' + fmtMm(revHit) + 'M (-' + fmtMm(rev*pct) + 'M)<br>• EBITDA estimado (asumiendo costos fijos): <b>' + fmtMm(ebNew) + 'M</b><br><br>💡 Asume OPEX y SG&A constantes. En realidad, drivers pay y comisiones bajarían ~80% del hit.';
+  }
+
+  // === Incident analyses ===
+  if(/incidente.+mas costoso|most expensive incident|costoso/i.test(lq)){
+    const cpi = _v2('cost_per_incident');
+    const total = _v2('inc_atfault_total');
+    return '⚠️ <b>Incidentes costosos · ' + mlblShort(CUR) + '</b><br>• Costo promedio/incidente: $' + cpi.toFixed(0) + ' MXN<br>• Total at-fault: ' + total + '<br>• Costo total estimado: $' + (cpi*total).toLocaleString() + ' MXN<br><br>💡 Para detalle por severidad, ve a Incidents tab.';
+  }
+  if(/% .*incident|porcentaje.+incident|incident.+rate|trips? con incident/i.test(lq)){
+    const total = _v2('inc_atfault_total') + _v2('inc_notfault_total');
+    const trips = _v2('trips_total');
+    return '⚠️ <b>Incidentes vs Trips · ' + mlblShort(CUR) + '</b><br>• Incidentes total: ' + total + '<br>• Trips: ' + trips.toLocaleString() + '<br>• Rate: <b>' + (trips?(total/trips*100).toFixed(3):'-') + '%</b> (1 incidente por cada ' + (total?Math.round(trips/total).toLocaleString():'-') + ' trips)';
+  }
+
+  // === Decisión urgente / Board urgent ===
+  if(/decision urgente|urgent decision|que debe aprobar|that the board.+(approve|decide)/i.test(lq)){
+    const items = topVariances('budNeg', 1);
+    if(!items.length) return '🟢 <b>Sin decisiones urgentes</b><br>El negocio está dentro de Budget. Foco táctico continuo.';
+    const top = items[0];
+    return '🚨 <b>Decisión urgente para el board</b><br>1. <b>' + top.ln.l + ' miss vs Budget</b>: ' + fmtMm(top.delta) + 'M (' + fmtPct(top.pct,1) + ')<br>   → Aprobar plan de recovery con timeline 30-60 días.<br>2. <b>Asignar accountability</b> (Matias/Carlos) para revertir la tendencia.<br>3. <b>Re-pronosticar año-fin</b> con nuevos supuestos.';
+  }
+
+  // === Talking point ===
+  if(/talking point|punto.+hablar|elevator pitch|frase para decir/i.test(lq)){
+    const rev = _v2('revenue'), eb = _v2('ebitda');
+    return '🎤 <b>Talking point · ' + mlblShort(CUR) + '</b><br><br>"En ' + mlblShort(CUR) + ', DAE generó ' + fmtMm(rev) + 'M de revenue con EBITDA de ' + fmtMm(eb) + 'M. ' + (eb < 0 ? 'Aún en fase de escala, el foco operativo está en performance ratio y churn.' : 'Mostrando tracción positiva en márgenes, manteniendo disciplina de costos.') + '"<br><br>💡 Listo para decir en voz alta.';
+  }
+
+  // === Suggest next question ===
+  if(/que (deberia|debería) preguntar|sugiere.+pregunta|next question|suggest question/i.test(lq)){
+    return '💡 <b>Preguntas que deberías hacer ahora</b><br>1. "Main increases this period"<br>2. "What should I worry about"<br>3. "Top opportunities"<br>4. "Forecast year end ebitda"<br>5. "Best month ebitda"<br>6. "Compara ebitda mar apr"<br>7. "3 cosas que salieron mal"';
+  }
+
+  // === Slide-style summary ===
+  if(/(1 slide|una slide|one slide|slide summary)/i.test(lq)){
+    const rev = _v2('revenue'), revB = _bv2('revenue');
+    const eb = _v2('ebitda'), ebB = _bv2('ebitda');
+    const ch = _v2('churn');
+    return '🎯 <b>DAE · ' + mlblShort(CUR) + ' · 1-Slide</b><br><br>' +
+      '<b>Revenue</b>: ' + fmtMm(rev) + 'M (' + (revB?fmtPct((rev-revB)/Math.abs(revB)*100,1)+' vs Bud':'') + ')<br>' +
+      '<b>EBITDA</b>: ' + fmtMm(eb) + 'M (' + (ebB?fmtPct((eb-ebB)/Math.abs(ebB)*100,1)+' vs Bud':'') + ')<br>' +
+      '<b>Churn</b>: ' + fmtPct(ch*100,1) + '<br><br>' +
+      '<b>Key takeaway</b>: ' + (eb < 0 ? 'Foco operativo y de costos. Camino a profitability gradual.' : 'Margen positivo. Escalar con disciplina.');
+  }
+
+  // === Explicar formula ===
+  if(/que es.+(rph|revenue per hour|performance ratio|fill rate|churn|ebitda margin|gross margin)|explica.+(rph|performance ratio|fill rate|churn)/i.test(lq)){
+    if(/rph|revenue per hour/i.test(lq)) return '📚 <b>RPH (Revenue per Hour)</b><br>= Revenue ÷ Supply Hours<br><br>Mide cuánto ingresa la flota por cada hora que un driver está disponible. Métrica clave de productividad.';
+    if(/performance ratio|pr\b/i.test(lq)) return '📚 <b>Performance Ratio</b><br>= Time on Trip ÷ Time Online<br><br>% del tiempo que el driver está efectivamente en viaje vs solo conectado. Target ≥80%.';
+    if(/fill rate/i.test(lq)) return '📚 <b>Fill Rate</b><br>= Trips Completed ÷ Trips Requested<br><br>% de solicitudes que se completan. Target ≥90%.';
+    if(/churn/i.test(lq)) return '📚 <b>Churn (mensual)</b><br>= Drivers que se dieron de baja ÷ Drivers activos al inicio<br><br>Tasa de abandono. Target <25%/mes.';
+    if(/ebitda margin/i.test(lq)) return '📚 <b>EBITDA Margin</b><br>= EBITDA ÷ Revenue<br><br>% de cada peso de revenue que queda antes de D&A, intereses e impuestos.';
+    if(/gross margin/i.test(lq)) return '📚 <b>Gross Margin</b><br>= Gross Profit ÷ Revenue = (Revenue - OPEX) ÷ Revenue<br><br>% que queda después de costos directos operativos.';
+  }
+
+  // === Esto no lo se / no data ===
+  if(/competidor|competitor|zona geografica|por zona|client.+recurrent|recurring client|cac|ltv|driver satisfaction|dia de la semana|day of week|driver.+mejor|best driver/i.test(lq)){
+    return '🤷 <b>No tengo ese dato</b><br>Los datos disponibles son del Excel de DAE (P&L + KPIs operativos agregados). No tengo:<br>• Datos por zona geográfica<br>• Datos por cliente o sesión<br>• CAC/LTV (necesitaría data de adquisición)<br>• Satisfacción individual de drivers<br>• Breakdown por día de la semana<br><br>💡 Para esos análisis, exporta del sistema de Uber o pídelo a Ops team.';
+  }
+  if(/regulatorio|regulatory|reforma|ley/i.test(lq)){
+    return '🤷 <b>Riesgo regulatorio</b><br>No tengo data en tiempo real del frente regulatorio. Sugerencias generales:<br>• Reforma laboral (clasificación drivers como empleados)<br>• Subsidios EV de gobierno federal/CDMX<br>• Regulación uber/ride-hailing por SECTUR o gobiernos locales<br><br>💡 Consulta con el equipo legal/regulatorio de VEMO.';
   }
 
     return '🤔 I didn\'t quite understand. I\'m VEMIA — I can answer executive questions like:\n\n📊 BASIC:\n• "revenue march 2026"\n• "ebitda 2025"\n• "ebitda margin january 2026"\n\n📈 ANALYSIS:\n• "main increases this period"\n• "main increases in kpis"\n• "biggest positive variances vs budget"\n• "biggest negative variances vs budget"\n• "why did costs increase?"\n• "which kpis improved this period?"\n\n🎯 EXECUTIVE:\n• "executive summary"\n• "what should I worry about?"\n• "what should I celebrate?"\n• "are we on track to budget?"\n• "what changed the most?"\n• "give me the period in 1 minute"\n• "key insights this period"\n• "anomalies"\n\n📋 OTHER:\n• "alerts" · "forecast" · "top opex" · "compare ebitda mar apr"\n\n💡 I understand both English & Spanish!';
