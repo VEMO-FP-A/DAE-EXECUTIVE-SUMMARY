@@ -255,9 +255,105 @@ kbd{display:inline-block;padding:1px 5px;font-size:10px;font-family:'Space Grote
 .dark-toggle:hover{transform:scale(1.08)}
 .print-btn{position:fixed;top:14px;right:60px;width:36px;height:36px;border-radius:50%;background:var(--sf);border:1px solid var(--b);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;z-index:60;box-shadow:0 2px 6px rgba(0,0,0,0.06)}
 .print-btn:hover{background:var(--teal);color:#fff;border-color:var(--teal)}
-body.dark-mode{--bg:#1a1f23;--sf:#22282d;--b:#353c42;--tx2:#d4dae0;--tx3:#9aa3ac;--forest:#7BDADA}
-body.dark-mode .vemo-tbl tbody td{color:#d4dae0}
-body.dark-mode .vemo-tbl thead th{background:#2a3137}
+/* ============ DARK MODE ============ */
+body.dark-mode{--bg:#1a1f23;--sf:#22282d;--b:#353c42;--tx2:#d4dae0;--tx3:#9aa3ac;--forest:#7BDADA;color:#e6ebee}
+/* Texto general */
+body.dark-mode .title{color:#7BDADA}
+body.dark-mode .subtitle{color:#9aa3ac}
+body.dark-mode .tab-bar button{color:#b8c1c8}
+body.dark-mode .tab-bar button.active{color:#7BDADA;border-bottom-color:#11ABAB}
+body.dark-mode .tab-bar{border-bottom-color:#353c42}
+body.dark-mode .vemo-section-title,
+body.dark-mode .vemo-section-title b{color:#7BDADA}
+/* KPI cards */
+body.dark-mode .kpi-card{background:#22282d;border-color:#353c42}
+body.dark-mode .kpi-l{color:#9aa3ac}
+body.dark-mode .kpi-v{color:#e6ebee}
+body.dark-mode .kpi-mom,body.dark-mode .kpi-bud,body.dark-mode .kpi-bud .lbl{color:#b8c1c8}
+/* Tablas P&L */
+body.dark-mode .vemo-tbl{background:#22282d}
+body.dark-mode .vemo-tbl tbody td{color:#d4dae0;background:#22282d}
+body.dark-mode .vemo-tbl tbody tr:hover td{background:#2a3137}
+body.dark-mode .vemo-tbl tbody tr.subtot td{background:#2a3137;color:#7BDADA}
+body.dark-mode .vemo-tbl tbody tr.exp td{color:#7BDADA}
+body.dark-mode .vemo-tbl tbody tr.sep td{background:#353c42}
+body.dark-mode .vemo-tbl thead th{background:#1F5454;color:#fff;border-color:#353c42}
+body.dark-mode .vemo-tbl .firstcol,
+body.dark-mode .vemo-tbl td.firstcol,
+body.dark-mode .vemo-tbl td.lbl{background:#22282d;color:#d4dae0}
+body.dark-mode .vemo-tbl tbody tr.subtot td.firstcol,
+body.dark-mode .vemo-tbl tbody tr.subtot td.lbl{background:#2a3137;color:#7BDADA}
+body.dark-mode .vemo-tbl .pos{color:#5dd39e}
+body.dark-mode .vemo-tbl .neg{color:#ff7676}
+/* Alerts */
+body.dark-mode .alert{background:#22282d;border-color:#353c42}
+body.dark-mode .alert .l{color:#7BDADA}
+/* Chart cards */
+body.dark-mode .chart-card{background:#22282d;border-color:#353c42}
+body.dark-mode .chart-hd{background:#1F5454;color:#fff}
+body.dark-mode .chart-hd .t{color:#fff}
+body.dark-mode .chart-toggles label{color:#fff}
+/* Heatmap */
+body.dark-mode .heatmap-hd{color:#7BDADA}
+body.dark-mode .heatmap td.lbl{color:#d4dae0}
+body.dark-mode .heatmap th{background:#2a3137;color:#d4dae0}
+/* Notas / cuadros info */
+body.dark-mode .note{background:#1f3a3a;border-color:#168888;color:#d4dae0}
+body.dark-mode .sev-card{background:#22282d;border-color:#353c42}
+body.dark-mode .sev-card td:first-child{color:#7BDADA}
+body.dark-mode .sev-card th{background:#2a3137;color:#d4dae0}
+body.dark-mode .sev-card td{color:#d4dae0}
+/* Operational metrics */
+body.dark-mode .opmet-row{background:#22282d;border-color:#353c42}
+body.dark-mode .opmet-row .l{color:#7BDADA}
+body.dark-mode .opmet-row .v{color:#e6ebee}
+/* Calculator */
+body.dark-mode .calc-result{background:#22282d;color:#7BDADA}
+body.dark-mode .fb-wrap,body.dark-mode .fb-kpis,body.dark-mode .fb-formula{background:#22282d;color:#d4dae0;border-color:#353c42}
+body.dark-mode .fb-kpi{background:#2a3137;color:#d4dae0;border-color:#353c42}
+body.dark-mode .fb-kpi:hover{background:#168888;color:#fff}
+body.dark-mode .fb-op{background:#2a3137;color:#d4dae0;border-color:#353c42}
+body.dark-mode .fb-op:hover{background:#11ABAB;color:#fff}
+body.dark-mode #fb-search,body.dark-mode #fb-number,body.dark-mode #fb-period{background:#1a1f23;color:#d4dae0;border-color:#353c42}
+/* Sticky top + tabs */
+body.dark-mode .sticky-top{background:#1a1f23}
+body.dark-mode .stabs button{background:#22282d;color:#b8c1c8;border-color:#353c42}
+body.dark-mode .stabs button.active{background:#11ABAB;color:#fff;border-color:#11ABAB}
+/* Highlights & Lowlights */
+body.dark-mode .hl-card{background:#22282d;border-color:#353c42}
+body.dark-mode .hl-card .hd{color:#7BDADA}
+body.dark-mode .hl-card .item .t{color:#e6ebee}
+body.dark-mode .hl-card .item div{color:#d4dae0}
+body.dark-mode .hl-g{color:#5dd39e!important}
+body.dark-mode .hl-r{color:#ff7676!important}
+body.dark-mode .pnl-card{background:#22282d;border-color:#353c42}
+body.dark-mode .pnl-card .hd{color:#7BDADA;background:#1F5454;color:#fff}
+body.dark-mode .pnl-card .sec{color:#d4dae0}
+body.dark-mode .pnl-card .l{color:#9aa3ac}
+/* Chat panel */
+body.dark-mode .chat-panel{background:#22282d;border-color:#353c42}
+body.dark-mode .chat-msg.bot{background:#2a3137;color:#d4dae0}
+body.dark-mode .chat-log{background:#22282d}
+body.dark-mode .chat-input-row{background:#22282d;border-color:#353c42}
+body.dark-mode .chat-input-row input{background:#1a1f23;color:#d4dae0;border-color:#353c42}
+body.dark-mode .chat-hints{background:#22282d;border-color:#353c42}
+body.dark-mode .chat-hint{background:#2a3137;color:#d4dae0;border-color:#353c42}
+body.dark-mode .chat-hint:hover{background:#11ABAB;color:#fff}
+body.dark-mode #chat-suggest{background:#1f2a2a;color:#d4dae0;border-color:#353c42}
+body.dark-mode #chat-suggest .sg-item:hover{background:#2a3137}
+/* Selects + inputs generales */
+body.dark-mode select,body.dark-mode input[type="text"],body.dark-mode input[type="number"]{background:#22282d;color:#d4dae0;border-color:#353c42}
+/* kbd badges */
+body.dark-mode kbd{background:#2a3137;color:#7BDADA;border-color:#353c42}
+/* Botones dark/print */
+body.dark-mode .dark-toggle,body.dark-mode .print-btn{background:#22282d;color:#d4dae0;border-color:#353c42}
+/* Variation table */
+body.dark-mode .var-filters{background:#22282d;border-color:#353c42}
+body.dark-mode .var-filters .lbl{color:#9aa3ac}
+body.dark-mode .var-filters select{background:#1a1f23;color:#d4dae0}
+/* Cualquier texto hardcoded en negro o forest se vuelve readable */
+body.dark-mode [style*="color:#1F5454"],body.dark-mode [style*="color:var(--forest)"]{color:#7BDADA!important}
+body.dark-mode [style*="color:#000"]{color:#d4dae0!important}
 @media print{
   .dark-toggle,.print-btn,.chat-fab,.chat-panel{display:none!important}
   body{background:#fff!important}
@@ -636,7 +732,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-06-15 13:26</div>
+  <div>build 2026-06-15 13:32</div>
 </footer>
 
 <script>
