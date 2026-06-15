@@ -485,32 +485,33 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
   <div class="chat-panel-hd">
     <span>🚖 <b>VEMIA</b> · Your DAE Assistant</span>
     <span style="margin-left:auto;display:flex;gap:6px">
-      <button id="chat-clear" title="Limpiar conversación" style="background:none;border:none;color:#fff;cursor:pointer;font-size:14px;padding:2px 6px">🗑️</button>
-      <button id="chat-close" title="Cerrar (Esc)" style="background:none;border:none;color:#fff;cursor:pointer;font-size:14px;padding:2px 6px">✕</button>
+      <button id="chat-clear" title="Clear conversation" style="background:none;border:none;color:#fff;cursor:pointer;font-size:14px;padding:2px 6px">🗑️</button>
+      <button id="chat-close" title="Close (Esc)" style="background:none;border:none;color:#fff;cursor:pointer;font-size:14px;padding:2px 6px">✕</button>
     </span>
   </div>
   <div id="chat-log" class="chat-log"></div>
   <div class="chat-input-row">
-    <input id="chat-input" type="text" placeholder="Pregúntame algo (presiona / para enfocar)" autocomplete="off" />
-    <button id="chat-mic" title="Dictar por voz" style="padding:9px 12px;background:#fff;color:var(--teal);border:1px solid var(--b);border-radius:6px;cursor:pointer;font-size:14px">🎤</button>
-    <button id="chat-send">Enviar</button>
+    <input id="chat-input" type="text" placeholder="Ask me anything (press / to focus)" autocomplete="off" />
+    <button id="chat-mic" title="Voice input" style="padding:9px 12px;background:#fff;color:var(--teal);border:1px solid var(--b);border-radius:6px;cursor:pointer;font-size:14px">🎤</button>
+    <button id="chat-send">Send</button>
   </div>
   <div id="chat-suggest" style="display:none;padding:6px 14px;background:#f4faf9;border-top:1px solid #eaf3f2;font-size:11px;color:var(--tx2);max-height:120px;overflow-y:auto"></div>
   <div class="chat-hints">
     <button class="chat-hint" data-q="executive summary">📊 Executive Summary</button>
     <button class="chat-hint" data-q="what should I worry about">⚠️ Risks</button>
-    <button class="chat-hint" data-q="biggest opportunities">💡 Opps</button>
+    <button class="chat-hint" data-q="biggest opportunities">💡 Opportunities</button>
     <button class="chat-hint" data-q="main increases this period">Top ↑</button>
     <button class="chat-hint" data-q="main decreases this period">Top ↓</button>
     <button class="chat-hint" data-q="are we on track to budget">vs Budget</button>
     <button class="chat-hint" data-q="forecast year end ebitda">🔮 Forecast</button>
     <button class="chat-hint" data-q="rank kpis by business impact">📈 Rank KPIs</button>
-    <button class="chat-hint" data-q="best month ebitda">🏆 Best Mes</button>
+    <button class="chat-hint" data-q="best month ebitda">🏆 Best Month</button>
     <button class="chat-hint" data-q="1 slide summary">🎯 1-Slide</button>
     <button class="chat-hint" data-q="talking point">🎤 Talking Point</button>
+    <button class="chat-hint" data-q="what do you recommend">💭 Recommend</button>
     <button class="chat-hint" data-q="fun fact">💡 Fun Fact</button>
-    <button class="chat-hint" data-q="chiste">😄 Chiste</button>
-    <button class="chat-hint" data-q="ayuda">🆘 Help</button>
+    <button class="chat-hint" data-q="joke">😄 Joke</button>
+    <button class="chat-hint" data-q="help">🆘 Help</button>
   </div>
 </div>
 
@@ -732,7 +733,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-06-15 13:32</div>
+  <div>build 2026-06-15 13:40</div>
 </footer>
 
 <script>
@@ -3927,7 +3928,7 @@ function chatBotAnswer(q){
   }
 
   // === RECOMMENDATIONS ===
-  if(/\b(que recomien|qué recomien|recomienda|recomendaci|sugeri|que deberia|what should we do|next step)\b/i.test(lq)){
+  if(/(que recomien|qué recomien|recomienda|recomien|recomendaci|sugeri|que deberi|what should (we|i) do|next step|recommend|suggest)/i.test(lq)){
     const eb = +arr('ebitda')[CUR]||0, ebB = +barr('ebitda')[CUR]||0;
     const ch = +arr('churn')[CUR]||0;
     let out = '💡 <b>VEMIA recomienda · ' + mlblShort(CUR) + '</b><br><br>';
@@ -4269,13 +4270,13 @@ function setupChat(){
   function showFollowUps(lastQ){
     const lq = (lastQ||'').toLowerCase();
     let chips = [];
-    if(/revenue|ingreso/.test(lq)) chips = ['ebitda este mes', 'main increases', '¿por qué subió revenue?'];
+    if(/revenue|ingreso/.test(lq)) chips = ['ebitda this month', 'main increases', 'why did revenue change'];
     else if(/ebitda/.test(lq)) chips = ['margin ebitda', 'best month ebitda', 'forecast year end ebitda'];
     else if(/churn|driver/.test(lq)) chips = ['hires this month', 'exits this month', 'performance ratio'];
-    else if(/opex|costo/.test(lq)) chips = ['gastos crecieron mas que revenue', 'top opex', 'driver payments'];
+    else if(/opex|costo/.test(lq)) chips = ['expenses grew faster than revenue', 'top opex', 'driver payments'];
     else if(/budget|presupuesto/.test(lq)) chips = ['biggest miss vs budget', 'on track to budget', 'forecast year end'];
-    else if(/risk|riesgo/.test(lq)) chips = ['top opportunities', 'que recomiendas', 'CFO concerns'];
-    else if(/opport|opp/.test(lq)) chips = ['biggest risks', 'rank kpis by impact', 'que recomiendas'];
+    else if(/risk|riesgo/.test(lq)) chips = ['top opportunities', 'what do you recommend', 'CFO concerns'];
+    else if(/opport|opp/.test(lq)) chips = ['biggest risks', 'rank kpis by impact', 'what do you recommend'];
     else chips = ['executive summary', 'what should I worry about', 'biggest opportunities'];
 
     const div = document.createElement('div');
@@ -4384,7 +4385,7 @@ function setupChat(){
   });
 
   function welcome(){
-    appendMsg('¡Hola David! 👋 Soy <b>VEMIA</b> 🚖 — tu asistente IA para DAE.<br><br>Pregúntame en español o inglés sobre KPIs, P&L, riesgos, oportunidades, forecasts, comparaciones, márgenes, o pídeme:<br>• <b>"executive summary"</b><br>• <b>"que opinas de DAE"</b><br>• <b>"talking point"</b><br>• <b>"chiste"</b> 😄<br><br>💡 Tip: presiona <kbd>/</kbd> en cualquier momento para enfocar el chat, <kbd>Esc</kbd> para cerrar, o usa 🎤 para dictar por voz.', 'bot');
+    appendMsg('Hi David! 👋 I\'m <b>VEMIA</b> 🚖 — your AI assistant for DAE.<br><br>Ask me in English or Spanish about KPIs, P&L, risks, opportunities, forecasts, comparisons, margins, or try:<br>• <b>"executive summary"</b><br>• <b>"what do you think of DAE"</b><br>• <b>"talking point"</b><br>• <b>"joke"</b> 😄<br><br>💡 Tip: press <kbd>/</kbd> anytime to focus the chat, <kbd>Esc</kbd> to close, or 🎤 to dictate by voice.', 'bot');
   }
   welcome();
 }
