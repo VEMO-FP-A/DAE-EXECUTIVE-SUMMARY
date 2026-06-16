@@ -326,10 +326,11 @@ body.dark-mode [style*="color:#1F5454"]{color:#7BDADA!important}
 
 
 /* === STICKY TOP: header + tabs en un solo bloque continuo === */
-.sticky-top{position:relative;top:auto;background:var(--bg);z-index:50;margin-left:-50px;padding-left:50px;margin-right:-26px;padding-right:26px;padding-top:14px;padding-bottom:0;box-shadow:0 4px 12px rgba(0,0,0,0)}
-.sticky-top.scrolled{box-shadow:0 4px 12px rgba(0,0,0,0.08)}
-.sticky-top .header{margin-bottom:14px;padding-top:0;padding-bottom:0;position:static;background:transparent;box-shadow:none}
-.sticky-top .tab-bar{margin-bottom:0;padding-bottom:0;position:static;background:transparent;border-bottom:1px solid var(--b)}
+/* Title block — plain block element, NO sticky/floating */
+.sticky-top{position:static!important;top:auto!important;background:transparent!important;z-index:auto!important;margin:0 0 14px 0!important;padding:14px 0 0 0!important;box-shadow:none!important;border:none!important}
+.sticky-top.scrolled{box-shadow:none!important}
+.sticky-top .header{margin-bottom:14px;padding:0;position:static;background:transparent;box-shadow:none}
+.sticky-top .tab-bar{margin:0;padding:0;position:static;background:transparent;border-bottom:1px solid var(--b)}
 @media (max-width:900px){
   .sticky-top{position:relative;top:0;box-shadow:none}
 }
@@ -655,7 +656,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-06-16 17:20</div>
+  <div>build 2026-06-16 17:29</div>
 </footer>
 
 <script>
