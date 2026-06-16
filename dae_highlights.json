@@ -24,7 +24,21 @@
     "",
     "You only fill highlights/lowlights. P&L commentary updates automatically when Excel data changes."
   ],
-
+  "_TEMPLATE_NEW_MONTH": {
+    "_comment": "Copy this block, rename key to e.g. 'May-26', fill in highlights & lowlights.",
+    "highlights": [
+      {
+        "title": "Example title (e.g. Revenue Performance)",
+        "body": "Closed at <b>MXN $X.Xm</b> (X% MoM; <span class='g'>+X% vs Budget</span>). Drivers: ..."
+      }
+    ],
+    "lowlights": [
+      {
+        "title": "Example title (e.g. Performance Ratio)",
+        "body": "<span class='r'>-X bps MoM</span> (X% vs X%). Cause: ..."
+      }
+    ]
+  },
   "Jan-26": {
     "highlights": [
       {
@@ -51,7 +65,6 @@
       }
     ]
   },
-
   "Feb-26": {
     "highlights": [
       {
@@ -78,7 +91,6 @@
       }
     ]
   },
-
   "Mar-26": {
     "highlights": [
       {
@@ -105,7 +117,6 @@
       }
     ]
   },
-
   "Apr-26": {
     "highlights": [
       {
@@ -148,19 +159,41 @@
       }
     ]
   },
-
-  "_TEMPLATE_NEW_MONTH": {
-    "_comment": "Copy this block, rename key to e.g. 'May-26', fill in highlights & lowlights.",
+  "May-26": {
     "highlights": [
       {
-        "title": "Example title (e.g. Revenue Performance)",
-        "body": "Closed at <b>MXN $X.Xm</b> (X% MoM; <span class='g'>+X% vs Budget</span>). Drivers: ..."
+        "title": "Conductores Categoría Oro",
+        "body": "Conductores en categoría Oro cerraron con <b>48.3%</b>, el porcentaje más alto desde la implementación del nuevo sistema de compensación."
+      },
+      {
+        "title": "Churn",
+        "body": "Churn total cerró en <b>34.7%</b> (-3.2 p.p. MoM), impulsado por una reducción en bajas involuntarias (-6 p.p. MoM)."
+      },
+      {
+        "title": "Programa Impulso de Unidades",
+        "body": "En mayo inició el <b>programa de Impulso de Unidades</b>: se inyectaron unidades seminuevas de LTO a DAE, con un incremento de <b>+60 horarios</b> en San Pedro de los Pinos."
       }
     ],
     "lowlights": [
       {
-        "title": "Example title (e.g. Performance Ratio)",
-        "body": "<span class='r'>-X bps MoM</span> (X% vs X%). Cause: ..."
+        "title": "Conversion Rate",
+        "body": "A pesar de un incremento de <b>+30% en leads</b>, el conversion rate bajó a <b>1.3%</b> (-0.3 p.p. WoW)."
+      },
+      {
+        "title": "Nivel A de Imagen",
+        "body": "Unidades con Nivel A de Imagen cerraron con <b>35.9%</b>. Se realizó una auditoría con Ops para reevaluar los niveles de las unidades."
+      },
+      {
+        "title": "Performance Ratio",
+        "body": "<b>Performance Ratio</b> cerró en <b>70.9%</b> (-2.5 p.p. MoM) — el peor desde junio del año pasado."
+      },
+      {
+        "title": "Corralones del Aeropuerto",
+        "body": "Se incrementó a <b>18 los corralones</b> del aeropuerto, aunque se está mitigando con un decremento de <b>-15%</b> en el promedio de días detenidos por corralón."
+      },
+      {
+        "title": "Eventos de Seguridad",
+        "body": "Durante el mes se registraron <b>171 eventos de seguridad</b>, con alta concentración en conductores de baja antigüedad: 33% con menos de 30 días y 49% con menos de 60 días."
       }
     ]
   }
