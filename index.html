@@ -656,7 +656,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-06-16 17:29</div>
+  <div>build 2026-06-16 17:36</div>
 </footer>
 
 <script>
@@ -727,15 +727,34 @@ document.querySelectorAll('#ratios-stabs button').forEach(b=>{
 });
 
 /* TOGGLE YTD / Histórico — re-renderea todas las tablas con el rango elegido */
-document.querySelectorAll('#ratios-range button').forEach(b=>{
-  b.addEventListener('click',()=>{
-    if(b.classList.contains('active')) return;
-    document.querySelectorAll('#ratios-range button').forEach(x=>x.classList.remove('active'));
-    b.classList.add('active');
-    KPI_RANGE = b.dataset.range;
-    try { renderAllRatios(); } catch(e){ console.warn('rerender ratios',e); }
-  });
-});
+(function(){
+  function wireRangeToggle(){
+    const btns = document.querySelectorAll('#ratios-range button');
+    if(!btns.length){ setTimeout(wireRangeToggle, 100); return; }
+    btns.forEach(b=>{
+      // Evitar registrar el listener dos veces
+      if(b.__wired) return;
+      b.__wired = true;
+      b.addEventListener('click', function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+        if(b.classList.contains('active')) return;
+        document.querySelectorAll('#ratios-range button').forEach(x=>x.classList.remove('active'));
+        b.classList.add('active');
+        KPI_RANGE = b.dataset.range;
+        console.log('[range toggle] KPI_RANGE =', KPI_RANGE);
+        try { renderAllRatios(); }
+        catch(e){ console.warn('rerender ratios error',e); }
+      });
+    });
+    console.log('[range toggle] wired', btns.length, 'buttons');
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', wireRangeToggle);
+  } else {
+    setTimeout(wireRangeToggle, 50);
+  }
+})();
 
 /* ============ ALERTS ============ */
 function renderAlerts(){
