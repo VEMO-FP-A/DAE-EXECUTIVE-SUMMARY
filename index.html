@@ -593,6 +593,22 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
       <button class="active" data-range="ytd">YTD</button>
       <button data-range="historic">Histórico</button>
     </div>
+    <script>
+      // Esconder el toggle YTD/Histórico cuando estamos en Calculator
+      (function(){
+        function hideRangeOnCalc(){
+          const range = document.getElementById('ratios-range');
+          if(!range) return;
+          document.querySelectorAll('#ratios-stabs button').forEach(b => {
+            b.addEventListener('click', () => {
+              range.style.display = (b.dataset.sub === 'calc') ? 'none' : '';
+            });
+          });
+        }
+        if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', hideRangeOnCalc);
+        else hideRangeOnCalc();
+      })();
+    </script>
   </div>
   <div class="rsub active" data-sub="main"><div id="rat-main"></div></div>
   <div class="rsub" data-sub="op"><div id="rat-op"></div></div>
@@ -624,10 +640,10 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
           <button id="fb-undo" class="fb-op fb-undo">⌫ Undo</button>
           <button id="fb-clear" class="fb-op fb-clear">Clear</button>
         </div>
-        <div class="fb-meta">
-          <label>Mes:</label>
-          <select id="fb-period">
-            <!-- Se llena dinamicamente con todos los meses con actuals -->
+        <div class="fb-meta" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+          <span style="font-size:11px;color:var(--tx3);font-style:italic">💡 Click sobre cada KPI agregado para cambiar su período (mes específico, YTD de un año, o total histórico)</span>
+          <select id="fb-period" style="display:none">
+            <!-- Legacy: ya no se usa, cada KPI tiene su propio período -->
           </select>
           <label style="margin-left:14px">Agregación cuando hay multi-mes:</label>
           <select id="fb-agg">
@@ -729,7 +745,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-06-16 16:28</div>
+  <div>build 2026-06-16 16:36</div>
 </footer>
 
 <script>
@@ -2268,7 +2284,8 @@ function setupCalc(){
     kpiList.querySelectorAll('.fb-kpi').forEach(el=>{
       el.addEventListener('click', ()=>{
         const k = kpis[+el.dataset.idx];
-        FB_TOKENS.push({type:'kpi', label:k.l, kpi:k});
+        // Default period: el mes actual (CUR)
+        FB_TOKENS.push({type:'kpi', label:k.l, kpi:k, periodType:'month', periodIdx:CUR});
         renderFormula();
       });
     });
@@ -2305,18 +2322,109 @@ function renderFormula(){
   if(!FB_TOKENS.length){
     fbox.innerHTML = '<span class="fb-placeholder">Click un KPI a la izquierda o un operador abajo para construir tu fórmula...</span>';
   } else {
-    fbox.innerHTML = FB_TOKENS.map(t=>{
-      if(t.type==='kpi') return '<span class="fb-token kpi">'+t.label+'</span>';
-      if(t.type==='op'){
-        const sym = t.op==='*'?'×':(t.op==='/'?'÷':(t.op==='-'?'−':t.op));
-        return '<span class="fb-token op">'+sym+'</span>';
+    // Construir cada KPI con su propio selector de período inline
+    let html = '';
+    FB_TOKENS.forEach((t, i) => {
+      if(t.type==='kpi'){
+        // Etiqueta del período actual
+        let pLabel = '';
+        if(t.periodType === 'month') pLabel = mlblShort(t.periodIdx);
+        else if(t.periodType === 'ytd') pLabel = 'YTD ' + (2000 + (t.periodYear%100)).toString().slice(2);
+        else pLabel = 'Total';
+        html += '<span class="fb-token kpi" data-tidx="'+i+'" style="cursor:pointer" title="Click para cambiar período">'+t.label+
+          ' <span style="opacity:0.75;font-size:0.85em;background:rgba(255,255,255,0.25);padding:1px 6px;border-radius:8px;margin-left:3px">'+pLabel+' ▾</span></span>';
       }
-      if(t.type==='num') return '<span class="fb-token num">'+t.value+'</span>';
-      if(t.type==='paren') return '<span class="fb-token paren">'+t.op+'</span>';
-      return '';
-    }).join('');
+      else if(t.type==='op'){
+        const sym = t.op==='*'?'×':(t.op==='/'?'÷':(t.op==='-'?'−':t.op));
+        html += '<span class="fb-token op">'+sym+'</span>';
+      }
+      else if(t.type==='num') html += '<span class="fb-token num">'+t.value+'</span>';
+      else if(t.type==='paren') html += '<span class="fb-token paren">'+t.op+'</span>';
+    });
+    fbox.innerHTML = html;
+    // Wire click en cada KPI token → mostrar menu de periodo
+    fbox.querySelectorAll('.fb-token.kpi').forEach(el => {
+      el.addEventListener('click', e => {
+        e.stopPropagation();
+        const idx = +el.dataset.tidx;
+        showPeriodMenu(el, idx);
+      });
+    });
   }
   evaluateFormula();
+}
+
+function showPeriodMenu(targetEl, tokenIdx){
+  // Cerrar otros menus
+  document.querySelectorAll('.fb-period-menu').forEach(m => m.remove());
+  const t = FB_TOKENS[tokenIdx];
+  if(!t || t.type !== 'kpi') return;
+
+  const menu = document.createElement('div');
+  menu.className = 'fb-period-menu';
+  menu.style.cssText = 'position:absolute;background:#fff;border:1px solid var(--b);border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,0.12);padding:8px;z-index:1000;font-size:12px;min-width:220px;display:flex;flex-direction:column;gap:4px';
+
+  // Opciones de período
+  let inner = '<div style="font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:0.05em;font-weight:700;margin-bottom:4px">Período para '+t.label+'</div>';
+  // Mes especifico
+  inner += '<label style="font-size:11px;color:var(--tx2);display:flex;align-items:center;gap:6px"><input type="radio" name="ft" value="month" '+(t.periodType==='month'?'checked':'')+'> Mes:</label>';
+  inner += '<select class="fb-pm-month" style="margin-left:18px;padding:4px 8px;border:1px solid var(--b);border-radius:4px;font-size:11px;font-family:inherit">';
+  for(let i=0; i<=LI; i++){
+    const sel = (t.periodType==='month' && t.periodIdx===i) ? ' selected' : '';
+    inner += '<option value="'+i+'"'+sel+'>'+mlbl(i)+'</option>';
+  }
+  inner += '</select>';
+  // YTD por año
+  inner += '<label style="font-size:11px;color:var(--tx2);display:flex;align-items:center;gap:6px;margin-top:4px"><input type="radio" name="ft" value="ytd" '+(t.periodType==='ytd'?'checked':'')+'> YTD del año:</label>';
+  inner += '<select class="fb-pm-year" style="margin-left:18px;padding:4px 8px;border:1px solid var(--b);border-radius:4px;font-size:11px;font-family:inherit">';
+  const years = new Set();
+  for(let i=0; i<=LI; i++){ const y = D.months[i] && D.months[i].split('-')[0]; if(y) years.add(y); }
+  Array.from(years).sort().forEach(y => {
+    const sel = (t.periodType==='ytd' && (t.periodYear||0)===parseInt(y)) ? ' selected' : '';
+    inner += '<option value="'+y+'"'+sel+'>'+y+'</option>';
+  });
+  inner += '</select>';
+  // Total
+  inner += '<label style="font-size:11px;color:var(--tx2);display:flex;align-items:center;gap:6px;margin-top:4px"><input type="radio" name="ft" value="total" '+(t.periodType==='total'?'checked':'')+'> Total (toda la historia)</label>';
+  // Apply button
+  inner += '<button class="fb-pm-apply" style="margin-top:8px;padding:6px 12px;background:var(--teal);color:#fff;border:none;border-radius:4px;cursor:pointer;font-family:inherit;font-weight:700;font-size:11px">Aplicar</button>';
+  // Remove KPI button
+  inner += '<button class="fb-pm-remove" style="margin-top:4px;padding:4px 8px;background:transparent;color:var(--red);border:1px solid var(--red);border-radius:4px;cursor:pointer;font-family:inherit;font-size:11px">🗑 Quitar este KPI</button>';
+  menu.innerHTML = inner;
+
+  // Posicionar bajo el token
+  const rect = targetEl.getBoundingClientRect();
+  menu.style.left = (rect.left + window.scrollX) + 'px';
+  menu.style.top = (rect.bottom + window.scrollY + 4) + 'px';
+  document.body.appendChild(menu);
+
+  menu.querySelector('.fb-pm-apply').addEventListener('click', () => {
+    const chk = menu.querySelector('input[name=ft]:checked');
+    if(!chk) { menu.remove(); return; }
+    const type = chk.value;
+    if(type === 'month'){
+      t.periodType = 'month';
+      t.periodIdx = parseInt(menu.querySelector('.fb-pm-month').value);
+    } else if(type === 'ytd'){
+      t.periodType = 'ytd';
+      t.periodYear = parseInt(menu.querySelector('.fb-pm-year').value);
+    } else {
+      t.periodType = 'total';
+    }
+    menu.remove();
+    renderFormula();
+  });
+  menu.querySelector('.fb-pm-remove').addEventListener('click', () => {
+    FB_TOKENS.splice(tokenIdx, 1);
+    menu.remove();
+    renderFormula();
+  });
+  // Cerrar al click fuera
+  setTimeout(() => {
+    document.addEventListener('click', function closer(ev){
+      if(!menu.contains(ev.target)){ menu.remove(); document.removeEventListener('click', closer); }
+    });
+  }, 50);
 }
 function evaluateFormula(){
   const resultBox = document.getElementById('fb-result-value');
@@ -2326,20 +2434,37 @@ function evaluateFormula(){
     metaBox.textContent = 'Construye tu fórmula para ver el resultado';
     return;
   }
-  const periodVal = document.getElementById('fb-period').value;
   const agg = document.getElementById('fb-agg').value;
-  // Period es un indice de mes (0..LI). Si es vacio o invalido, usar CUR
-  const monthIdx = (periodVal === '' || isNaN(parseInt(periodVal))) ? CUR : parseInt(periodVal);
-  function getKpiVal(k){
+  function getKpiVal(t){
+    const k = t.kpi;
     const A = arrCand(k.keys);
-    let useAgg = agg==='auto' ? k.agg : agg;
-    // Solo del mes especifico
-    return useAgg==='eop' ? eop(A, monthIdx) : (useAgg==='avg' ? avg(A, monthIdx, monthIdx) : sum(A, monthIdx, monthIdx));
+    const useAgg = agg==='auto' ? k.agg : agg;
+    // Cada token tiene su propio período
+    if(t.periodType === 'ytd'){
+      // YTD del año especifico
+      const yPrefix = t.periodYear + '-';
+      let startIdx = -1, endIdx = -1;
+      for(let i=0; i<D.months.length; i++){
+        if(D.months[i] && D.months[i].startsWith(yPrefix)){
+          if(startIdx < 0) startIdx = i;
+          if(i <= LI) endIdx = i;
+        }
+      }
+      if(startIdx < 0) return 0;
+      if(endIdx < startIdx) endIdx = startIdx;
+      return useAgg==='eop' ? eop(A, endIdx) : (useAgg==='avg' ? avg(A, startIdx, endIdx) : sum(A, startIdx, endIdx));
+    } else if(t.periodType === 'total'){
+      return useAgg==='eop' ? eop(A, LI) : (useAgg==='avg' ? avg(A, 0, LI) : sum(A, 0, LI));
+    } else {
+      // Mes especifico
+      const idx = (t.periodIdx != null) ? t.periodIdx : CUR;
+      return useAgg==='eop' ? eop(A, idx) : (useAgg==='avg' ? avg(A, idx, idx) : sum(A, idx, idx));
+    }
   }
   // Build JS expression from tokens
   let expr = '';
   for(const t of FB_TOKENS){
-    if(t.type==='kpi'){ expr += '('+getKpiVal(t.kpi)+')'; }
+    if(t.type==='kpi'){ expr += '('+getKpiVal(t)+')'; }
     else if(t.type==='op'){ expr += t.op; }
     else if(t.type==='num'){ expr += '('+t.value+')'; }
     else if(t.type==='paren'){ expr += t.op; }
@@ -4663,14 +4788,12 @@ function init(){
   try { setupVarFilters(); } catch(e){ console.warn('setupVarFilters',e); }
   try { renderVariation(); } catch(e){ console.warn('renderVariation',e); }
   try { setupComparator(); renderComparator(); } catch(e){ console.warn('comparator',e); }
-  // Dark mode toggle
   try {
     const dt = document.getElementById('dark-toggle');
     if(dt){
       const setMode = (dark) => {
         document.body.classList.toggle('dark-mode', dark);
         dt.textContent = dark ? '☀️' : '🌙';
-        dt.title = dark ? 'Modo claro' : 'Modo oscuro';
         try { localStorage.setItem('dae-dark', dark ? '1' : '0'); } catch(e){}
       };
       try { setMode(localStorage.getItem('dae-dark') === '1'); } catch(e){}
