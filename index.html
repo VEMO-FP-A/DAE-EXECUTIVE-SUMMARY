@@ -745,7 +745,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-06-16 16:36</div>
+  <div>build 2026-06-16 16:49</div>
 </footer>
 
 <script>
@@ -2489,8 +2489,15 @@ function evaluateFormula(){
     else if(a >= 1) fmt = result.toFixed(2);
     else fmt = result.toFixed(4);
     resultBox.textContent = fmt;
-    const periodLbl = period==='cur'? mlbl(CUR) : (period==='ytd'? 'YTD '+CURY : 'Histórico');
-    metaBox.textContent = 'Periodo: '+periodLbl+' · Agregación: '+(agg==='auto'?'Auto':agg);
+    // Resumen de períodos usados por cada KPI en la fórmula
+    const periodLabels = FB_TOKENS
+      .filter(t => t.type === 'kpi')
+      .map(t => {
+        if(t.periodType === 'month') return t.kpi.l+'='+mlblShort(t.periodIdx);
+        if(t.periodType === 'ytd')   return t.kpi.l+'=YTD '+t.periodYear;
+        return t.kpi.l+'=Total';
+      }).join(' · ');
+    metaBox.textContent = 'Períodos: ' + (periodLabels || '—') + ' · Agregación: '+(agg==='auto'?'Auto':agg);
   } catch(e){
     resultBox.textContent = '⚠';
     metaBox.textContent = 'Error: '+e.message;
