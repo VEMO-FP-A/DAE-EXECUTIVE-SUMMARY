@@ -789,7 +789,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-06-23 18:40</div>
+  <div>build 2026-06-23 18:45</div>
 </footer>
 
 <script>
@@ -2756,7 +2756,7 @@ function chatBotAnswer(q){
     const redirect = _vemiaPatternRedirect(lqRaw);
     if(redirect && redirect !== lq){
       const result = chatBotAnswer(redirect);
-      if(result && !result.includes('didn\\'t')) return result;
+      if(result && !result.includes("didn't")) return result;
     }
   } catch(e){}
 
@@ -2766,7 +2766,7 @@ function chatBotAnswer(q){
     const ctxQ = _vemiaInferContext(lqRaw);
     if(ctxQ && ctxQ !== lq){
       const result = chatBotAnswer(ctxQ);
-      if(result && !result.includes('didn\\'t')) return result;
+      if(result && !result.includes("didn't")) return result;
     }
   } catch(e){}
 
@@ -2809,7 +2809,7 @@ function chatBotAnswer(q){
       const period = lq.replace(compoundMatch[0],'').trim();
       const r1 = chatBotAnswer(k1 + ' ' + period);
       const r2 = chatBotAnswer(k2 + ' ' + period);
-      if(r1 && r2 && !r1.includes('didn\\'t understand') && !r2.includes('didn\\'t understand')){
+      if(r1 && r2 && !r1.includes("didn't") && !r2.includes("didn't")){
         return '🔗 <b>Compound answer:</b><br><br>' + r1 + '<br><br>━━━━━━━━━━<br><br>' + r2;
       }
     }
