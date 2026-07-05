@@ -635,25 +635,8 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
       <button data-sub="fin">Financial</button>
       <button data-sub="calc">Calculator</button>
     </div>
-    <div class="stabs" id="ratios-range">
-      <button class="active" data-range="ytd">YTD</button>
-      <button data-range="historic">Historic</button>
-    </div>
-    <script>
-      (function(){
-        function hideRangeOnCalc(){
-          const range = document.getElementById('ratios-range');
-          if(!range) return;
-          document.querySelectorAll('#ratios-stabs button').forEach(b => {
-            b.addEventListener('click', () => {
-              range.style.display = (b.dataset.sub === 'calc') ? 'none' : '';
-            });
-          });
-        }
-        if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', hideRangeOnCalc);
-        else hideRangeOnCalc();
-      })();
-    </script>
+    <!-- Toggle YTD/Historic movido a debajo de los charts (solo afecta las tablas) -->
+    <div id="ratios-range" style="display:none"></div>
   </div>
   <div class="rsub active" data-sub="main"><div id="rat-main"></div></div>
   <div class="rsub" data-sub="op"><div id="rat-op"></div></div>
@@ -792,7 +775,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-07-03 11:24</div>
+  <div>build 2026-07-04 18:52</div>
 </footer>
 
 <script>
@@ -865,14 +848,14 @@ document.querySelectorAll('#ratios-stabs button').forEach(b=>{
 
 /* TOGGLE YTD / Historic — event delegation (sobrevive re-renders) */
 document.addEventListener('click', function(ev){
-  const b = ev.target.closest('#ratios-range button');
+  const b = ev.target.closest('#ratios-range button, [data-role="range-toggle"] button');
   if(!b) return;
   ev.preventDefault();
   ev.stopPropagation();
   const newRange = b.dataset.range;
   if(KPI_RANGE === newRange) return; // ya esta activo
-  // Toggle visual de TODOS los botones (no solo el clickeado)
-  document.querySelectorAll('#ratios-range button').forEach(x => {
+  // Toggle visual de TODOS los botones range en todas las sub-tabs
+  document.querySelectorAll('#ratios-range button, [data-role="range-toggle"] button').forEach(x => {
     x.classList.toggle('active', x.dataset.range === newRange);
   });
   KPI_RANGE = newRange;
@@ -1785,7 +1768,17 @@ function renderAllRatios(){
     tgt.insertAdjacentHTML('beforeend', '<div class="vemo-section-title">'+sectionTitle+'</div>');
     // 2) Charts arriba
     renderRatioCharts(targetId, charts);
-    // 3) Tabla expandible abajo
+    // 3) Toggle YTD/Historic — solo afecta a la tabla numérica, no a los charts
+    const toggleId = targetId + '-range-toggle';
+    tgt.insertAdjacentHTML('beforeend',
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin:18px 0 8px 0;padding:10px 14px;background:var(--sf);border:1px solid var(--b);border-radius:8px;flex-wrap:wrap;gap:10px">' +
+      '<div style="font-size:11px;color:var(--tx3);font-style:italic">💡 The toggle below only affects the numeric table (deltas, budget, etc.). Charts always show full history.</div>' +
+      '<div class="stabs" id="' + toggleId + '" data-role="range-toggle" style="margin:0">' +
+      '<button class="' + (KPI_RANGE==='ytd'?'active':'') + '" data-range="ytd">YTD</button>' +
+      '<button class="' + (KPI_RANGE==='historic'?'active':'') + '" data-range="historic">Historic</button>' +
+      '</div>' +
+      '</div>');
+    // 4) Tabla expandible abajo
     renderRatioExpandable(targetId, list, '');
   }
   renderPair('rat-main', RATIOS.main, RATIO_CHARTS.main, 'DAE – <b>Main KPIs</b>');
