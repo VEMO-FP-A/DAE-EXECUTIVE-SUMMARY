@@ -59,7 +59,7 @@ body{font-family:'Space Grotesk',-apple-system,sans-serif;background:var(--bg);c
 /* KPI cards */
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:11px;margin-bottom:24px}
 .kpi-card{background:var(--sf);border:1px solid var(--b);border-radius:10px;padding:13px 15px 14px;position:relative;overflow:hidden;display:flex;flex-direction:column}
-.kpi-spark{margin-top:10px;height:60px;overflow:hidden}
+.kpi-spark{margin-top:10px;height:50px;overflow:hidden}
 body.dark-mode .kpi-spark svg path[stroke="#11ABAB"]{stroke:#7BDADA!important}
 body.dark-mode .kpi-spark svg path[stroke="#1F5454"]{stroke:#9aa3ac!important}
 .kpi-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--teal)}
@@ -775,7 +775,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-07-06 10:34</div>
+  <div>build 2026-07-06 10:39</div>
 </footer>
 
 <script>
@@ -955,90 +955,48 @@ function getVal(ki, idx){
   return v;
 }
 
-// Build inline SVG sparkline for KPI cards, with min/max labels
-function _kpiSparkline(series, budgetSeries, w, h, ki){
-  w = w || 260; h = h || 60;
+// Build inline SVG sparkline for KPI cards (clean, no inline labels)
+function _kpiSparkline(series, budgetSeries, w, h){
+  w = w || 260; h = h || 50;
   const vals = series.filter(v => v != null && !isNaN(v));
   if(!vals.length) return '';
   const mn = Math.min(...vals), mx = Math.max(...vals);
   const range = mx - mn || 1;
   const n = series.length;
-  // Padding lateral izquierdo para los labels
-  const PAD_L = 30;
-  const chartW = w - PAD_L - 2;
-  const stepX = n > 1 ? chartW / (n - 1) : chartW;
-  function y(v){ return h - ((v - mn) / range) * (h - 8) - 4; }
-  function x(i){ return PAD_L + i * stepX; }
-  // Formateo del valor min/max segun el tipo del KPI
-  function fmtSpark(v){
-    if(v == null || isNaN(v)) return '';
-    if(ki && ki.type === 'pct'){
-      const pct = Math.abs(v) <= 1 ? v*100 : v;
-      return pct.toFixed(0) + '%';
-    }
-    const a = Math.abs(v);
-    if(a >= 1e6) return (v/1e6).toFixed(1)+'M';
-    if(a >= 1e3) return (v/1e3).toFixed(0)+'k';
-    if(a >= 100) return v.toFixed(0);
-    if(a >= 10) return v.toFixed(1);
-    return v.toFixed(2);
-  }
-  // Path para el area (sparkline principal)
-  let path = 'M' + PAD_L + ',' + h + ' ';
-  let started = false;
-  for(let i=0; i<n; i++){
-    const v = series[i];
-    if(v == null || isNaN(v)) continue;
-    path += 'L' + x(i).toFixed(1) + ',' + y(v).toFixed(1) + ' ';
-    started = true;
-  }
-  path += 'L' + (PAD_L + chartW) + ',' + h + ' Z';
-  // Linea principal
-  let linePath = '';
-  started = false;
-  for(let i=0; i<n; i++){
-    const v = series[i];
-    if(v == null || isNaN(v)) continue;
-    linePath += (started ? 'L' : 'M') + x(i).toFixed(1) + ',' + y(v).toFixed(1) + ' ';
-    started = true;
-  }
-  // Budget dashed line
-  let budgetPath = '';
-  if(budgetSeries && budgetSeries.length){
-    let bstarted = false;
-    for(let i=0; i<n; i++){
-      const bv = budgetSeries[i];
-      if(bv == null || isNaN(bv) || bv === 0) continue;
-      budgetPath += (bstarted ? 'L' : 'M') + x(i).toFixed(1) + ',' + y(bv).toFixed(1) + ' ';
-      bstarted = true;
-    }
-  }
-  // Encontrar posicion de min/max para marcar con puntos
-  let mnIdx = -1, mxIdx = -1;
+  const stepX = n > 1 ? w / (n - 1) : w;
+  function y(v){ return h - ((v - mn) / range) * (h - 6) - 3; }
+  // Area
+  let path = 'M0,' + h + ' ';
   for(let i=0; i<n; i++){
     const v = series[i]; if(v == null || isNaN(v)) continue;
-    if(v === mn && mnIdx < 0) mnIdx = i;
-    if(v === mx && mxIdx < 0) mxIdx = i;
+    path += 'L' + (i*stepX).toFixed(1) + ',' + y(v).toFixed(1) + ' ';
   }
-  const dots = (mnIdx >= 0 ? '<circle cx="'+x(mnIdx).toFixed(1)+'" cy="'+y(mn).toFixed(1)+'" r="2.5" fill="#C0392B"/>' : '') +
-               (mxIdx >= 0 ? '<circle cx="'+x(mxIdx).toFixed(1)+'" cy="'+y(mx).toFixed(1)+'" r="2.5" fill="#117A45"/>' : '');
-  // Labels de min/max a la izquierda
-  const yMax = y(mx).toFixed(1);
-  const yMin = y(mn).toFixed(1);
-  const yAxis =
-    '<text x="'+(PAD_L-4)+'" y="'+(parseFloat(yMax)+3)+'" font-family="Space Grotesk,sans-serif" font-size="8.5" fill="#117A45" text-anchor="end" font-weight="700">'+fmtSpark(mx)+'</text>' +
-    '<text x="'+(PAD_L-4)+'" y="'+(parseFloat(yMin)+3)+'" font-family="Space Grotesk,sans-serif" font-size="8.5" fill="#C0392B" text-anchor="end" font-weight="700">'+fmtSpark(mn)+'</text>' +
-    '<line x1="'+PAD_L+'" y1="0" x2="'+PAD_L+'" y2="'+h+'" stroke="#e8eaed" stroke-width="0.8"/>';
+  path += 'L' + w + ',' + h + ' Z';
+  // Line
+  let linePath = '', started = false;
+  for(let i=0; i<n; i++){
+    const v = series[i]; if(v == null || isNaN(v)) continue;
+    linePath += (started ? 'L' : 'M') + (i*stepX).toFixed(1) + ',' + y(v).toFixed(1) + ' ';
+    started = true;
+  }
+  // Budget dashed
+  let budgetPath = '';
+  if(budgetSeries && budgetSeries.length){
+    let bs = false;
+    for(let i=0; i<n; i++){
+      const bv = budgetSeries[i]; if(bv == null || isNaN(bv) || bv === 0) continue;
+      budgetPath += (bs ? 'L' : 'M') + (i*stepX).toFixed(1) + ',' + y(bv).toFixed(1) + ' ';
+      bs = true;
+    }
+  }
   return '<svg viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none" style="display:block;width:100%;height:100%">' +
     '<defs><linearGradient id="spg" x1="0" y1="0" x2="0" y2="1">' +
-    '<stop offset="0%" stop-color="#11ABAB" stop-opacity="0.35"/>' +
-    '<stop offset="100%" stop-color="#11ABAB" stop-opacity="0.05"/>' +
+    '<stop offset="0%" stop-color="#11ABAB" stop-opacity="0.30"/>' +
+    '<stop offset="100%" stop-color="#11ABAB" stop-opacity="0.03"/>' +
     '</linearGradient></defs>' +
-    yAxis +
     '<path d="' + path + '" fill="url(#spg)" stroke="none"/>' +
     '<path d="' + linePath + '" fill="none" stroke="#11ABAB" stroke-width="1.8"/>' +
     (budgetPath ? '<path d="' + budgetPath + '" fill="none" stroke="#1F5454" stroke-width="1.2" stroke-dasharray="3,2" opacity="0.7"/>' : '') +
-    dots +
     '</svg>';
 }
 
@@ -1060,11 +1018,36 @@ function renderKPICards(){
     const arrSym=momPct==null?'':(momPct>=0?'▲':'▼');
     const cardCls=isNegBetter(momPct)?'amber':'';
 
-    // Serie para sparkline: hasta LI (o al menos ultimos 24 meses actuales)
+    // Serie para sparkline
     const spStart = 0;
     const spSeries = (A||[]).slice(spStart, LI+1);
     const spBudget = (B && B.length) ? (B||[]).slice(spStart, LI+1) : null;
-    const sparkline = _kpiSparkline(spSeries, spBudget, 260, 60, ki);
+    const sparkline = _kpiSparkline(spSeries, spBudget, 260, 50);
+    // Rango de valores (min-max) formateado corto
+    const spVals = spSeries.filter(v => v != null && !isNaN(v));
+    let rangeTxt = '';
+    if(spVals.length){
+      const mn = Math.min(...spVals), mx = Math.max(...spVals);
+      function fmtRange(v){
+        if(v == null || isNaN(v)) return '';
+        if(ki && ki.type === 'pct'){
+          const pct = Math.abs(v) <= 1 ? v*100 : v;
+          return pct.toFixed(0) + '%';
+        }
+        const a = Math.abs(v);
+        if(a >= 1e6) return (v/1e6).toFixed(1)+'M';
+        if(a >= 1e3) return (v/1e3).toFixed(0)+'k';
+        if(a >= 100) return Math.round(v).toString();
+        if(a >= 10) return v.toFixed(1);
+        return v.toFixed(2);
+      }
+      rangeTxt = fmtRange(mn) + ' – ' + fmtRange(mx);
+    }
+    const dateRangeTxt = mlblShort(spStart) + ' – ' + mlblShort(LI);
+    const sparkFooter = '<div style="display:flex;justify-content:space-between;font-size:9.5px;color:var(--tx3);margin-top:4px;padding:0 2px">' +
+      '<span>' + rangeTxt + '</span>' +
+      '<span>' + dateRangeTxt + '</span>' +
+      '</div>';
 
     return '<div class="kpi-card '+cardCls+'">'+
       '<div class="kpi-l">'+ki.l+'</div>'+
@@ -1073,7 +1056,8 @@ function renderKPICards(){
       (valBud?
         '<div class="kpi-bud"><span><span class="lbl">vs Budget</span> '+fmtVal(valBud,ki)+'</span><span class="v '+budCls+'">'+budTxt+'</span></div>'
        :'<div class="kpi-bud"><span class="lbl">Budget</span><span class="v" style="color:var(--tx3)">n.a.</span></div>')+
-      '<div class="kpi-spark" style="margin-top:10px;height:44px;overflow:hidden">'+sparkline+'</div>'+
+      '<div class="kpi-spark">'+sparkline+'</div>'+
+      sparkFooter +
     '</div>';
   }).join('');
 }
