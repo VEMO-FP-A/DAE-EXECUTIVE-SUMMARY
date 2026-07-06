@@ -162,38 +162,38 @@
   "May-26": {
     "highlights": [
       {
-        "title": "Conductores Categoría Oro",
-        "body": "Conductores en categoría Oro cerraron con <b>48.3%</b>, el porcentaje más alto desde la implementación del nuevo sistema de compensación."
+        "title": "Oro Category Drivers",
+        "body": "Oro category closed at <b>48.3%</b>, the highest share since implementing the new compensation system."
       },
       {
         "title": "Churn",
-        "body": "Churn total cerró en <b>34.7%</b> (-3.2 p.p. MoM), impulsado por una reducción en bajas involuntarias (-6 p.p. MoM)."
+        "body": "Total churn closed at <b>34.7%</b> (-3.2 p.p. MoM), driven by a reduction in involuntary exits (-6 p.p. MoM)."
       },
       {
-        "title": "Programa Impulso de Unidades",
-        "body": "En mayo inició el <b>programa de Impulso de Unidades</b>: se inyectaron unidades seminuevas de LTO a DAE, con un incremento de <b>+60 horarios</b> en San Pedro de los Pinos."
+        "title": "Unit Impulse Program",
+        "body": "In May we kicked off the <b>Unit Impulse Program</b>: semi-new LTO units were injected into DAE, with an increase of <b>+60 shifts</b> in San Pedro de los Pinos."
       }
     ],
     "lowlights": [
       {
         "title": "Conversion Rate",
-        "body": "A pesar de un incremento de <b>+30% en leads</b>, el conversion rate bajó a <b>1.3%</b> (-0.3 p.p. WoW)."
+        "body": "Despite a <b>+30% increase in leads</b>, the conversion rate dropped to <b>1.3%</b> (-0.3 p.p. WoW)."
       },
       {
-        "title": "Nivel A de Imagen",
-        "body": "Unidades con Nivel A de Imagen cerraron con <b>35.9%</b>. Se realizó una auditoría con Ops para reevaluar los niveles de las unidades."
+        "title": "Level A Image",
+        "body": "Units with Level A Image closed at <b>35.9%</b>. An audit with Ops was carried out to re-evaluate unit levels."
       },
       {
         "title": "Performance Ratio",
-        "body": "<b>Performance Ratio</b> cerró en <b>70.9%</b> (-2.5 p.p. MoM) — el peor desde junio del año pasado."
+        "body": "<b>Performance Ratio</b> closed at <b>70.9%</b> (-2.5 p.p. MoM) — the worst reading since June last year."
       },
       {
-        "title": "Corralones del Aeropuerto",
-        "body": "Se incrementó a <b>18 los corralones</b> del aeropuerto, aunque se está mitigando con un decremento de <b>-15%</b> en el promedio de días detenidos por corralón."
+        "title": "Airport Impound Yards",
+        "body": "Airport impound yards increased to <b>18</b>, though partially mitigated by a <b>-15%</b> reduction in average days detained per yard."
       },
       {
-        "title": "Eventos de Seguridad",
-        "body": "Durante el mes se registraron <b>171 eventos de seguridad</b>, con alta concentración en conductores de baja antigüedad: 33% con menos de 30 días y 49% con menos de 60 días."
+        "title": "Safety Events",
+        "body": "The month recorded <b>171 safety events</b>, concentrated in low-tenure drivers: 33% with less than 30 days, and 49% with less than 60 days."
       }
     ]
   }
