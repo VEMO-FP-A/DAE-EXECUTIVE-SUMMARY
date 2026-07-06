@@ -710,6 +710,19 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
     </div>
     <div class="chart-body" style="height:320px"><canvas id="pl-bridge"></canvas></div>
   </div>
+
+  <!-- EBITDA vs Budget Bridge (nueva) -->
+  <div class="vemo-section-title">EBITDA <b>vs Budget</b> Bridge</div>
+  <div class="chart-card" style="margin-bottom:22px">
+    <div class="chart-hd">
+      <span class="t">EBITDA Budget → EBITDA Actual · <span id="ebridge-period"></span></span>
+      <div class="chart-toggles">
+        <label><input type="radio" name="ebridge-mode" value="cur" checked> Current month</label>
+        <label><input type="radio" name="ebridge-mode" value="ytd"> YTD</label>
+      </div>
+    </div>
+    <div class="chart-body" style="height:360px"><canvas id="ebitda-bridge"></canvas></div>
+  </div>
   <div class="vemo-section-title">P&L Charts (with Budget & Projection)</div>
   <div id="pl-charts" class="charts-grid"></div>
 
@@ -775,7 +788,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-07-06 10:39</div>
+  <div>build 2026-07-06 11:17</div>
 </footer>
 
 <script>
@@ -2126,10 +2139,170 @@ function renderPLBridge(){
     document.querySelectorAll('input[name="bridge-mode"]').forEach(r=>{
       r.addEventListener('change', renderPLBridge);
     });
+    document.querySelectorAll('input[name="ebridge-mode"]').forEach(r=>{
+      r.addEventListener('change', renderEbitdaBridge);
+    });
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', bind);
   else bind();
 })();
+
+// === EBITDA vs Budget Bridge (Waterfall) ===
+let __EBRIDGE_CHART = null;
+function renderEbitdaBridge(){
+  const ctx = document.getElementById('ebitda-bridge');
+  if(!ctx) return;
+  const mode = (document.querySelector('input[name="ebridge-mode"]:checked')||{}).value || 'cur';
+  const isYTD = (mode === 'ytd');
+  const s = isYTD ? YTD_START : CUR;
+  const e = CUR;
+  // Helper: sum of an actual key from s..e
+  function sA(k){ const a = arr(k); return sum(a, s, e); }
+  // Helper: sum of budget key
+  function sB(k){ const b = barr(k); return sum(b, s, e); }
+
+  // EBITDA base (Budget) — usar ebitda_ex_non_rec si esta en Managerial view
+  const ebitdaKey = (typeof plViewKey === 'function') ? plViewKey('ebitda') : 'ebitda';
+  const ebitdaBud = sB(ebitdaKey);
+  const ebitdaAct = sA(ebitdaKey);
+
+  // Variance por linea = (Actual - Budget), pero con signo correcto:
+  // Revenue/GP: positivo si actual > budget → mejora EBITDA
+  // OPEX/SG&A/D&A/etc (costos): positivo si actual < budget → mejora EBITDA (reducimos costos)
+  function varRev(k){ return sA(k) - sB(k); }         // Revenue side
+  function varCost(k){ return sB(k) - sA(k); }         // Cost side: budget - actual (favorable = actual bajo budget)
+
+  // Steps del bridge:
+  //  Start: EBITDA Budget
+  //  + Revenue variance
+  //  + Driver Payments variance (cost)
+  //  + Maintenance variance
+  //  + Marketing variance
+  //  + Uber Take Rate variance
+  //  + Other OPEX variance (resto de OPEX no explicado arriba)
+  //  + SG&A variance
+  //  End: EBITDA Actual
+
+  const revVar = varRev('revenue');
+  const dpVar = varCost('driver_payments');
+  const maintVar = varCost('maintenance_opex');
+  const mktVar = varCost('marketing');
+  const utrVar = varCost('uber_take_rate');
+  const evfuelVar = varCost('ev_fuel_cost');
+  const opexTotalVar = varCost('opex');
+  // "Other OPEX" = opex total variance MINUS los que ya listamos
+  const otherOpex = opexTotalVar - dpVar - maintVar - mktVar - utrVar - evfuelVar;
+  const sgaVar = varCost('corporate_expenses');
+
+  const steps = [
+    {l:'EBITDA Budget',        val: ebitdaBud,     type:'total', color:'#168888'},
+    {l:'Revenue',              val: revVar,        type:'var'},
+    {l:'Driver Payments',      val: dpVar,         type:'var'},
+    {l:'EV/Fuel',              val: evfuelVar,     type:'var'},
+    {l:'Maintenance',          val: maintVar,      type:'var'},
+    {l:'Marketing',            val: mktVar,        type:'var'},
+    {l:'Uber Take Rate',       val: utrVar,        type:'var'},
+    {l:'Other OPEX',           val: otherOpex,     type:'var'},
+    {l:'SG&A',                 val: sgaVar,        type:'var'},
+    {l:'EBITDA Actual',        val: ebitdaAct,     type:'total', color:'#168888'},
+  ];
+
+  // Construir waterfall
+  const labels = steps.map(s => s.l);
+  const bases = [], tops = [], colors = [], displayVals = [];
+  let running = ebitdaBud;
+  steps.forEach((stp, i) => {
+    if(stp.type === 'total'){
+      bases.push(0);
+      tops.push(stp.val);
+      colors.push(stp.color || '#168888');
+      displayVals.push(stp.val);
+      running = stp.val;
+    } else {
+      // Var bars: from running to running + val
+      const start = running;
+      const end = running + stp.val;
+      bases.push(Math.min(start, end));
+      tops.push(Math.abs(stp.val));
+      colors.push(stp.val >= 0 ? '#5dd39e' : '#ff8080');
+      displayVals.push(stp.val);
+      running = end;
+    }
+  });
+
+  if(__EBRIDGE_CHART) __EBRIDGE_CHART.destroy();
+  __EBRIDGE_CHART = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        // Base transparente
+        {label:'_base', data: bases, backgroundColor:'transparent', borderWidth:0, stack:'wf'},
+        // Barras visibles
+        {label:'Var', data: tops, backgroundColor: colors, stack:'wf', borderRadius:2}
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          callbacks:{
+            title: function(c){ return labels[c[0].dataIndex]; },
+            label: function(c){
+              const i = c.dataIndex;
+              const v = displayVals[i];
+              const sign = v >= 0 ? '+' : '';
+              return steps[i].type === 'total'
+                ? 'MXN ' + fmtMm(v) + 'M'
+                : (sign + fmtMm(v) + 'M vs Budget');
+            }
+          }
+        },
+        datalabels: { display: false }
+      },
+      scales:{
+        x:{ticks:{font:{family:'Space Grotesk',size:10},color:'#666',maxRotation:35,minRotation:0}, grid:{display:false}},
+        y:{ticks:{font:{family:'Space Grotesk',size:10},color:'#888',callback:function(v){return fmtMm(v)+'M';}}, grid:{color:'rgba(0,0,0,0.05)'}}
+      }
+    },
+    plugins: [{
+      // Custom plugin: dibujar el valor arriba de cada barra
+      id: 'ebridgeLabels',
+      afterDatasetsDraw(chart){
+        const {ctx, chartArea, scales} = chart;
+        const meta = chart.getDatasetMeta(1);
+        ctx.save();
+        ctx.font = 'bold 11px "Space Grotesk", sans-serif';
+        ctx.textAlign = 'center';
+        meta.data.forEach((bar, i) => {
+          const v = displayVals[i];
+          const sign = v >= 0 ? '+' : '';
+          const txt = steps[i].type === 'total'
+            ? fmtMm(v) + 'M'
+            : sign + fmtMm(v) + 'M';
+          const cx = bar.x;
+          const barTop = bar.y;
+          const barBot = bar.y + bar.height;
+          const drawY = Math.min(barTop, barBot) - 6;
+          ctx.fillStyle = steps[i].type === 'total' ? '#fff' : (v >= 0 ? '#117A45' : '#C0392B');
+          if(steps[i].type === 'total'){
+            // Dibujar dentro de la barra
+            ctx.fillText(txt, cx, (barTop + barBot) / 2 + 4);
+          } else {
+            ctx.fillText(txt, cx, drawY);
+          }
+        });
+        ctx.restore();
+      }
+    }]
+  });
+
+  // Label del periodo
+  const pl = isYTD ? ('YTD ' + mlblShort(YTD_START) + ' → ' + mlblShort(CUR)) : mlblShort(CUR);
+  const periodEl = document.getElementById('ebridge-period');
+  if(periodEl) periodEl.textContent = pl;
+}
 
 function renderPLCharts(){
   const root=document.getElementById('pl-charts');
@@ -5276,6 +5449,7 @@ function init(){
   try { setupChat(); } catch(e){ console.warn('setupChat',e); }
   try { renderPLVemo('pl-vemo-detail',{simple:false,title:'DAE – <b>P&L Summary</b>'}); } catch(e){ console.warn('renderPLVemo detail',e); }
   try { renderPLBridge(); } catch(e){ console.warn('renderPLBridge',e); }
+  try { renderEbitdaBridge(); } catch(e){ console.warn('renderEbitdaBridge',e); }
   try { renderPLCharts(); } catch(e){ console.warn('renderPLCharts',e); }
   try { setupVarFilters(); } catch(e){ console.warn('setupVarFilters',e); }
   try { renderVariation(); } catch(e){ console.warn('renderVariation',e); }
