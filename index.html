@@ -788,7 +788,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-07-06 11:17</div>
+  <div>build 2026-07-06 11:26</div>
 </footer>
 
 <script>
@@ -4610,6 +4610,20 @@ function chatBotAnswer(q){
     return '📅 Hoy es <b>' + dia.charAt(0).toUpperCase() + dia.slice(1) + '</b>';
   }
 
+  // === EXPORTAR FEEDBACK: descargar respuestas mal calificadas ===
+  if(/\b(export feedback|feedback export|training data|download feedback|malas respuestas|bad answers)\b/i.test(lq)){
+    try {
+      const fb = JSON.parse(localStorage.getItem('vemia-feedback') || '[]');
+      const bad = fb.filter(x => x.rating === 'bad');
+      if(!bad.length) return '📥 No hay respuestas marcadas 👎 aún. Ve dando 👎 a las respuestas malas y luego pídeme "export feedback".';
+      const blob = new Blob([JSON.stringify(fb, null, 2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'vemia_feedback.json'; a.click();
+      URL.revokeObjectURL(url);
+      return '📥 <b>Feedback exportado</b>: ' + fb.length + ' respuestas (' + bad.length + ' malas 👎, ' + (fb.length-bad.length) + ' buenas 👍).<br>Envíamelo por chat y agrego intents nuevos.';
+    } catch(e){ return 'No pude exportar el feedback.'; }
+  }
+
   // === JUEGO: VEMO RACE ===
   if(/\b(play game|jugar|juego|game|race|vemo race|carros|highway)\b/i.test(lq)){
     setTimeout(() => { try { window.startVemoGame && window.startVemoGame(); } catch(e){} }, 200);
@@ -5139,21 +5153,97 @@ function setupChat(){
   }
   function hideTyping(){ const t = document.getElementById('__typing'); if(t) t.remove(); }
 
+  // === Ask Claude URL builder ===
+  function _buildAskClaudeUrl(userQuestion, vemiaAnswer){
+    // Contexto DAE compacto para pre-cargar en Claude
+    const rev = +arr('revenue')[CUR]||0, revB = +barr('revenue')[CUR]||0;
+    const eb = +arr('ebitda')[CUR]||0, ebB = +barr('ebitda')[CUR]||0;
+    const ni = +arr('net_income')[CUR]||0;
+    const ch = +arr('churn')[CUR]||0, pr = +arr('performance_ratio')[CUR]||0;
+    const ctx = 'You are a senior FP&A analyst at VEMO (Mexican ride-hailing company, division DAE = Driving As Employee). Answer this executive question using the following data:\\n\\n' +
+      '**Period:** ' + mlbl(CUR) + '\\n' +
+      '**Revenue:** ' + fmtMm(rev) + 'M (Budget: ' + fmtMm(revB) + 'M)\\n' +
+      '**EBITDA:** ' + fmtMm(eb) + 'M (Budget: ' + fmtMm(ebB) + 'M)\\n' +
+      '**Net Income:** ' + fmtMm(ni) + 'M\\n' +
+      '**Churn:** ' + (ch*100).toFixed(1) + '%\\n' +
+      '**Performance Ratio:** ' + (pr*100).toFixed(1) + '%\\n\\n' +
+      (vemiaAnswer ? '**VEMIA (local AI) answered:**\\n' + vemiaAnswer.replace(/<[^>]+>/g,'') + '\\n\\n---\\n\\n' : '') +
+      '**My question:** ' + userQuestion + '\\n\\n' +
+      'Provide a professional, concise answer as if you were briefing the CFO. Use bullet points where helpful.';
+    return 'https://claude.ai/new?q=' + encodeURIComponent(ctx);
+  }
+
+  // === Feedback: guardar respuestas mal calificadas en localStorage ===
+  function _saveFeedback(question, answer, rating){
+    try {
+      const key = 'vemia-feedback';
+      const list = JSON.parse(localStorage.getItem(key) || '[]');
+      list.push({q:question, a:answer.replace(/<[^>]+>/g,''), rating, ts: new Date().toISOString()});
+      // Solo mantener las ultimas 100
+      while(list.length > 100) list.shift();
+      localStorage.setItem(key, JSON.stringify(list));
+    } catch(e){}
+  }
+
+  let __lastUserQ = '';
   function appendMsg(text, who){
     const div = document.createElement('div');
     div.className = 'chat-msg '+who;
     if(text && text.indexOf('<') >= 0) div.innerHTML = text;
     else div.textContent = text;
+    if(who === 'user'){
+      __lastUserQ = text;
+    }
     if(who === 'bot'){
+      // Barra de acciones bajo cada respuesta
+      const bar = document.createElement('div');
+      bar.style.cssText = 'display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;align-items:center';
+      // Copy
       const cpy = document.createElement('button');
       cpy.textContent = '📋 Copy';
-      cpy.style.cssText = 'display:block;margin-top:6px;font-size:9.5px;padding:2px 8px;background:transparent;border:1px solid var(--b);border-radius:10px;cursor:pointer;color:var(--tx3)';
+      cpy.style.cssText = 'font-size:9.5px;padding:2px 8px;background:transparent;border:1px solid var(--b);border-radius:10px;cursor:pointer;color:var(--tx3)';
       cpy.addEventListener('click', e=>{
         e.stopPropagation();
-        const plain = div.innerText.replace(/📋 Copy$/,'').trim();
+        const plain = div.innerText.replace(/📋 Copy👍👎🧠 Ask Claude$/g,'').trim();
         if(navigator.clipboard) navigator.clipboard.writeText(plain).then(()=>{ cpy.textContent='✓ Copied'; setTimeout(()=>cpy.textContent='📋 Copy', 1500); });
       });
-      div.appendChild(cpy);
+      bar.appendChild(cpy);
+      // 👍 Like
+      const like = document.createElement('button');
+      like.textContent = '👍';
+      like.title = 'Good answer';
+      like.style.cssText = 'font-size:11px;padding:2px 8px;background:transparent;border:1px solid var(--b);border-radius:10px;cursor:pointer';
+      like.addEventListener('click', e=>{
+        e.stopPropagation();
+        _saveFeedback(__lastUserQ, text, 'good');
+        like.textContent = '✓'; like.style.background = '#5dd39e'; like.style.color = '#fff';
+        setTimeout(()=>{ like.textContent = '👍'; like.style.background = 'transparent'; like.style.color = ''; }, 1200);
+      });
+      bar.appendChild(like);
+      // 👎 Dislike
+      const dis = document.createElement('button');
+      dis.textContent = '👎';
+      dis.title = 'Bad answer — save for improvement';
+      dis.style.cssText = 'font-size:11px;padding:2px 8px;background:transparent;border:1px solid var(--b);border-radius:10px;cursor:pointer';
+      dis.addEventListener('click', e=>{
+        e.stopPropagation();
+        _saveFeedback(__lastUserQ, text, 'bad');
+        dis.textContent = '✗ Saved'; dis.style.background = '#ff7676'; dis.style.color = '#fff'; dis.style.fontSize = '9.5px';
+        setTimeout(()=>{ dis.textContent = '👎'; dis.style.background = 'transparent'; dis.style.color = ''; dis.style.fontSize = '11px'; }, 1500);
+      });
+      bar.appendChild(dis);
+      // 🧠 Ask Claude
+      const askC = document.createElement('button');
+      askC.textContent = '🧠 Ask Claude';
+      askC.title = 'Open claude.ai with your question + DAE context';
+      askC.style.cssText = 'font-size:9.5px;padding:2px 8px;background:linear-gradient(90deg,#7BDADA,#11ABAB);color:#fff;border:none;border-radius:10px;cursor:pointer;font-weight:700';
+      askC.addEventListener('click', e=>{
+        e.stopPropagation();
+        const url = _buildAskClaudeUrl(__lastUserQ, text);
+        window.open(url, '_blank');
+      });
+      bar.appendChild(askC);
+      div.appendChild(bar);
     }
     log.appendChild(div); log.scrollTop = log.scrollHeight;
   }
@@ -5519,21 +5609,10 @@ function setupVemoGame(){
     ctx.fillStyle = 'rgba(0,0,0,0.75)'; ctx.fillRect(0,0,W,H);
     ctx.fillStyle = '#ff7676'; ctx.font = 'bold 32px sans-serif'; ctx.textAlign = 'center';
     ctx.fillText('CRASH!', W/2, H/2 - 30);
-    ctx.fillStyle = '#7BDADA'; ctx.font = 'bold 22px sans-serif';
-    ctx.fillText('Score: ' + score, W/2, H/2 + 10);
-    ctx.fillStyle = '#fff'; ctx.font = '12px sans-serif';
-    ctx.fillText('Press R to restart', W/2, H/2 + 40);
   }
   function loop(){
     if(!running) return;
-    if(paused){
-      drawRoad(); drawPlayer();
-      obstacles.forEach(o => drawCar(LANES_X[o.lane], o.y, o.color));
-      ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(0,0,W,H);
-      ctx.fillStyle = '#fff'; ctx.font = 'bold 30px sans-serif'; ctx.textAlign = 'center';
-      ctx.fillText('PAUSED', W/2, H/2);
-      rafId = requestAnimationFrame(loop); return;
-    }
+    if(paused){ rafId = requestAnimationFrame(loop); return; }
     stripeOffset += speed; if(stripeOffset > 36) stripeOffset = 0;
     const dx = player.targetX - player.x;
     if(Math.abs(dx) > 0.5) player.x += dx * 0.20; else player.x = player.targetX;
@@ -5564,29 +5643,16 @@ function setupVemoGame(){
     drawPlayer();
     rafId = requestAnimationFrame(loop);
   }
-  function open(){
-    overlay.style.display = 'flex';
-    drawRoad(); drawPlayer();
-    ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.fillRect(0,0,W,H);
-    ctx.fillStyle = '#7BDADA'; ctx.font = 'bold 26px sans-serif'; ctx.textAlign = 'center';
-    ctx.fillText('VEMO RACE', W/2, H/2 - 20);
-    ctx.fillStyle = '#fff'; ctx.font = '13px sans-serif';
-    ctx.fillText('Press Start to begin', W/2, H/2 + 10);
-  }
-  function close(){
-    overlay.style.display = 'none'; running = false;
-    if(rafId){ cancelAnimationFrame(rafId); rafId = null; }
-  }
+  function open(){ overlay.style.display = 'flex'; drawRoad(); drawPlayer(); }
+  function close(){ overlay.style.display = 'none'; running = false; if(rafId){ cancelAnimationFrame(rafId); rafId = null; } }
   window.startVemoGame = open;
   document.getElementById('vg-start').addEventListener('click', () => { reset(); loop(); });
   document.getElementById('vg-close').addEventListener('click', close);
   document.addEventListener('keydown', e => {
     if(overlay.style.display !== 'flex') return;
-    if(e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A'){
-      player.lane = Math.max(0, player.lane - 1); player.targetX = LANES_X[player.lane];
-    } else if(e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D'){
-      player.lane = Math.min(2, player.lane + 1); player.targetX = LANES_X[player.lane];
-    } else if(e.key === ' '){ e.preventDefault(); paused = !paused; }
+    if(e.key === 'ArrowLeft' || e.key === 'a'){ player.lane = Math.max(0, player.lane - 1); player.targetX = LANES_X[player.lane]; }
+    else if(e.key === 'ArrowRight' || e.key === 'd'){ player.lane = Math.min(2, player.lane + 1); player.targetX = LANES_X[player.lane]; }
+    else if(e.key === ' '){ e.preventDefault(); paused = !paused; }
     else if(e.key === 'r' || e.key === 'R'){ reset(); loop(); }
     else if(e.key === 'Escape'){ close(); }
   });
