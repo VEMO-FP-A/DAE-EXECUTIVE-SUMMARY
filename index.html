@@ -788,7 +788,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-07-06 11:26</div>
+  <div>build 2026-07-06 11:49</div>
 </footer>
 
 <script>
@@ -2885,6 +2885,10 @@ const _VEMIA_PATTERNS = [
   {pat:/(in (one|1)|en (un|1))\s+(slide|page|minute|sentence|frase)/i, redirect:'1 slide summary'},
   {pat:/(what (do you|did you|will you)\s+think|qu[eé] piensas|qu[eé] opinas)/i, redirect:'que opinas de DAE'},
   {pat:/(quick (overview|summary|recap)|recap|res[uú]men r[aá]pido)/i, redirect:'executive summary'},
+  {pat:/(summary|resumen)\s+(for|de|del|of)\s+(this|the|el|esta|este)?\s*(period|month|mes|per[ií]odo|quarter|trimestre)?/i, redirect:'executive summary'},
+  {pat:/^(summary|resumen|res[uú]men|overview|sumario)\s*[\.\?!]?\s*$/i, redirect:'executive summary'},
+  {pat:/(give me a summary|dame un resumen|show me the summary|muestrame el resumen)/i, redirect:'executive summary'},
+  {pat:/^(the |el |este )?(period|mes|month)\s+(summary|resumen)/i, redirect:'executive summary'},
   {pat:/(red flags?|warnings?|alarmas?|signals?)/i, redirect:'what should I worry about'},
   {pat:/(green flags?|wins|positives?|logros)/i, redirect:'what should I celebrate'},
   {pat:/(what (changed|moved|shifted)|qu[eé] (cambi[oó]|movi[oó]))/i, redirect:'what changed the most'},
@@ -2967,6 +2971,17 @@ function _vemiaLevenshtein(a, b){
 }
 
 // === Fuzzy KPI match: busca KPI por nombre incluso con typos ===
+const _VEMIA_STOPWORDS = new Set([
+  'this','that','the','for','and','are','was','were','with','from','have','has',
+  'you','your','our','their','they','can','will','would','could','should',
+  'esto','esta','este','este','para','por','con','del','las','los','una','uno',
+  'que','como','pero','mas','menos','muy','sobre','entre','desde','hasta',
+  'period','month','year','quarter','summary','overview','recap','resumen',
+  'now','then','here','give','show','tell','say','get','has','had','been',
+  'what','when','where','which','who','how','why','also','too','yes','no',
+  'period','periods','monthly','yearly','quarterly'
+]);
+
 function _vemiaFuzzyKpi(lq, KP){
   const words = lq.split(/\s+/);
   let bestKey = null, bestDist = 99, bestLen = 0;
@@ -2978,12 +2993,17 @@ function _vemiaFuzzyKpi(lq, KP){
   }
   if(bestKey) return bestKey;
   // Si no hubo match exacto, intentar fuzzy en cada palabra
+  // MAS ESTRICTO: palabras >= 5 chars, aliases >= 5 chars, dist <= 1, skip stopwords
   for(const w of words){
-    if(w.length < 3) continue;
+    if(w.length < 5) continue;
+    if(_VEMIA_STOPWORDS.has(w)) continue;
     for(const alias in KP){
-      if(alias.length < 4) continue;
+      if(alias.length < 5) continue;
+      // Require length ratio close to 1 (no matcheo "this" con "tripxxx")
+      const lenRatio = Math.min(w.length, alias.length) / Math.max(w.length, alias.length);
+      if(lenRatio < 0.7) continue;
       const d = _vemiaLevenshtein(w, alias);
-      if(d <= 2 && d < bestDist){ bestDist = d; bestKey = KP[alias]; }
+      if(d <= 1 && d < bestDist){ bestDist = d; bestKey = KP[alias]; }
     }
   }
   return bestKey;
