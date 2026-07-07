@@ -788,7 +788,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-07-06 11:49</div>
+  <div>build 2026-07-07 16:33</div>
 </footer>
 
 <script>
@@ -1924,10 +1924,18 @@ function makeLineChart(canvasId,label,data,opts){
   }
   if(opts.projection&&main.filter(v=>v!=null).length>=3){
     const proj=new Array(MAX_X).fill(null);
-    const last3=main.slice(LI-2,LI+1).filter(v=>v!=null);
-    const ma=last3.length?last3.reduce((a,b)=>a+b,0)/last3.length:0;
-    for(let i=LI+1;i<Math.min(LI+4,MAX_X);i++) proj[i]=ma;
-    datasets.push({label:'Projection (3M MA)',data:proj,borderColor:'#7BDADA',backgroundColor:'rgba(123,218,218,0.15)',borderDash:[3,3],fill:false,tension:0.32,borderWidth:1.5,pointRadius:2,pointBackgroundColor:'#7BDADA'});
+    // FIX 1: prepend last actual so dashed line connects continuously
+    proj[LI] = main[LI];
+    // FIX 2: rolling 3M MA — each new projection feeds into the next window
+    const workBuf = main.slice(0, LI+1).filter(v=>v!=null);
+    const projEnd = Math.min(LI+4, MAX_X);
+    for(let i=LI+1; i<projEnd; i++){
+      const win = workBuf.slice(-3);
+      const ma = win.length ? win.reduce((a,b)=>a+b,0)/win.length : 0;
+      proj[i] = ma;
+      workBuf.push(ma); // feed forward
+    }
+    datasets.push({label:'Projection (3M MA)',data:proj,borderColor:'#7BDADA',backgroundColor:'rgba(123,218,218,0.15)',borderDash:[3,3],fill:false,tension:0.32,borderWidth:1.5,pointRadius:2,pointBackgroundColor:'#7BDADA',spanGaps:false});
   }
   let yr=smartYRange(main);
   if(opts.wideY && yr.min !== undefined && yr.max !== undefined){
