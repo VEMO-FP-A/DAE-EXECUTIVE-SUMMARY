@@ -789,7 +789,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-07-08 17:26</div>
+  <div>build 2026-07-08 17:43</div>
 </footer>
 
 <script>
@@ -974,7 +974,13 @@ function _kpiSparkline(series, budgetSeries, w, h){
   w = w || 260; h = h || 50;
   const vals = series.filter(v => v != null && !isNaN(v));
   if(!vals.length) return '';
-  const mn = Math.min(...vals), mx = Math.max(...vals);
+  // FIX: include Budget values in min/max so the dashed budget line stays inside viewBox
+  // even when budget is far above/below actuals
+  const budVals = (budgetSeries && budgetSeries.length)
+    ? budgetSeries.filter(v => v != null && !isNaN(v) && v !== 0)
+    : [];
+  const allVals = vals.concat(budVals);
+  const mn = Math.min.apply(null, allVals), mx = Math.max.apply(null, allVals);
   const range = mx - mn || 1;
   const n = series.length;
   const stepX = n > 1 ? w / (n - 1) : w;
@@ -1955,7 +1961,23 @@ function makeLineChart(canvasId,label,data,opts){
     }
     datasets.push({label:'Forecast (3M MA)',data:proj,borderColor:'#7BDADA',backgroundColor:'rgba(123,218,218,0.15)',borderDash:[3,3],fill:false,tension:0.32,borderWidth:1.5,pointRadius:2,pointBackgroundColor:'#7BDADA',spanGaps:false});
   }
-  let yr=smartYRange(main);
+  // FIX: combinar Actuals + Budget + Forecast para el rango del eje Y
+  // (antes solo consideraba Actuals -> la linea de budget se salia del viewport
+  //  cuando estaba muy arriba o abajo)
+  const _yRangeVals = main.slice();
+  if(opts.budget && opts.budget.length){
+    for(let _i=0; _i<opts.budget.length; _i++){
+      const _bv = opts.budget[_i];
+      if(_bv != null && !isNaN(_bv) && _bv !== 0) _yRangeVals.push(_bv);
+    }
+  }
+  if(typeof proj !== 'undefined' && proj && proj.length){
+    for(let _i=0; _i<proj.length; _i++){
+      const _pv = proj[_i];
+      if(_pv != null && !isNaN(_pv)) _yRangeVals.push(_pv);
+    }
+  }
+  let yr=smartYRange(_yRangeVals);
   if(opts.wideY && yr.min !== undefined && yr.max !== undefined){
     yr = {min: 0, max: yr.max};
   }
