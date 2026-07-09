@@ -789,7 +789,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-07-08 18:26</div>
+  <div>build 2026-07-09 11:11</div>
 </footer>
 
 <script>
@@ -5613,6 +5613,16 @@ function renderMonthlyHL(){
 })();
 
 function init(){
+  // Populate "Data through <Month YYYY>" en el subtitle del header
+  try {
+    const _dtEl = document.getElementById('data-through-label');
+    if(_dtEl && D.months && D.months[LI]){
+      const MN_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      const parts = D.months[LI].split('-');
+      const yy = parts[0], mm = +parts[1];
+      _dtEl.innerHTML = '📅 <span style="text-transform:uppercase;letter-spacing:0.06em">Data through ' + (MN_FULL[mm-1] || mm) + ' ' + yy + '</span>';
+    }
+  } catch(e){ console.warn('data-through-label',e); }
   try { renderAlerts(); } catch(e){ console.warn('renderAlerts',e); }
   try { renderKPICards(); } catch(e){ console.warn('renderKPICards',e); }
   try { renderExecKpiChart(); } catch(e){ console.warn('renderExecKpiChart',e); }
