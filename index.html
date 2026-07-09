@@ -789,7 +789,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-07-09 12:32</div>
+  <div>build 2026-07-09 13:07</div>
 </footer>
 
 <script>
@@ -1073,7 +1073,7 @@ function renderKPICards(){
         if(a >= 1e3) return _withCommas(v/1e3,0)+'k';
         if(a >= 100) return Math.round(v).toLocaleString();
         if(a >= 10) return v.toFixed(1);
-        return v.toFixed(2);
+        return v.toFixed(1);
       }
       rangeTxt = fmtRange(mn) + ' – ' + fmtRange(mx);
     }
@@ -2886,10 +2886,10 @@ function evaluateFormula(){
     }
     const a = Math.abs(result);
     let fmt;
-    if(a >= 1e6) fmt = (result/1e6).toFixed(2)+'M';
-    else if(a >= 1e3) fmt = (result/1e3).toFixed(2)+'k';
-    else if(a >= 1) fmt = result.toFixed(2);
-    else fmt = result.toFixed(4);
+    if(a >= 1e6) fmt = (result/1e6).toFixed(1)+'M';
+    else if(a >= 1e3) fmt = (result/1e3).toFixed(1)+'k';
+    else if(a >= 1) fmt = result.toFixed(1);
+    else fmt = result.toFixed(1);
     resultBox.textContent = fmt;
     const periodLabels = FB_TOKENS.filter(t => t.type === 'kpi').map(t => {
       if(t.periodType === 'month') return t.kpi.l+'='+mlblShort(t.periodIdx);
@@ -4510,7 +4510,7 @@ function chatBotAnswer(q){
     let out = _banner('Correlations with '+target.replace(/_/g,' ').toUpperCase());
     corrs.slice(0,8).forEach(function(c,i){
       const cls = c.corr > 0.5 ? 'g' : (c.corr < -0.5 ? 'r' : 'm');
-      out += '<div class="ri"><div>'+(i+1)+'. '+c.k.replace(/_/g,' ')+': <span class="'+cls+'">'+(c.corr>=0?'+':'')+c.corr.toFixed(2)+'</span></div></div>';
+      out += '<div class="ri"><div>'+(i+1)+'. '+c.k.replace(/_/g,' ')+': <span class="'+cls+'">'+(c.corr>=0?'+':'')+c.corr.toFixed(1)+'</span></div></div>';
     });
     return out;
   }
@@ -4685,8 +4685,8 @@ function chatBotAnswer(q){
       const recentClass = (correlGood ? r.recentChange > 0 : r.recentChange < 0) ? 'g' : 'r';
       const sign = r.recentChange >= 0 ? '+' : '';
       out += '<div class="ri"><div>'+(i+1)+'. <b>'+r.l+'</b>' + (r.invert?' <span style="color:var(--tx3);font-size:10px">(cost)</span>':'') +
-        '<br>&nbsp;&nbsp;&nbsp;<b>Score:</b> <span class="'+cls+'">'+r.impact.toFixed(2)+'</span>' +
-        ' · <b>Correlation:</b> '+r.corr.toFixed(2)+' ('+dir+')' +
+        '<br>&nbsp;&nbsp;&nbsp;<b>Score:</b> <span class="'+cls+'">'+r.impact.toFixed(1)+'</span>' +
+        ' · <b>Correlation:</b> '+r.corr.toFixed(1)+' ('+dir+')' +
         ' · <b>Recent 3M trend:</b> <span class="'+recentClass+'">'+sign+(r.recentChange*100).toFixed(1)+'%</span></div></div>';
     });
     return out;
@@ -5007,16 +5007,16 @@ function chatBotAnswer(q){
   if(/costo.+por.+viaje|cost.+per.+trip/i.test(lq)){
     const opex = Math.abs(_v2('opex')), trips = _v2('trips_total');
     if(!trips) return '⚠️ No tengo trips para ' + mlblShort(CUR);
-    return '🚖 <b>Costo por viaje · ' + mlblShort(CUR) + '</b><br>• OPEX total: ' + fmtMm(opex) + 'M<br>• Trips: ' + trips.toLocaleString() + '<br>• <b>Costo/Trip: $' + (opex*1e6/trips).toFixed(2) + ' MXN</b>';
+    return '🚖 <b>Costo por viaje · ' + mlblShort(CUR) + '</b><br>• OPEX total: ' + fmtMm(opex) + 'M<br>• Trips: ' + trips.toLocaleString() + '<br>• <b>Costo/Trip: $' + (opex*1e6/trips).toFixed(1) + ' MXN</b>';
   }
   if(/(ingreso|revenue).+por.+viaje|revenue.+per.+trip|price.+per.+trip/i.test(lq)){
     const ppt = _v2('price_per_ride');
-    return '💵 <b>Revenue por viaje · ' + mlblShort(CUR) + '</b><br>• Price/Trip: <b>$' + ppt.toFixed(2) + ' MXN</b>';
+    return '💵 <b>Revenue por viaje · ' + mlblShort(CUR) + '</b><br>• Price/Trip: <b>$' + ppt.toFixed(1) + ' MXN</b>';
   }
   if(/(margen|margin).+(contribuci|contribution).+viaje|contribution.+per.+trip/i.test(lq)){
     const gp = _v2('gross_profit'), trips = _v2('trips_total');
     if(!trips) return '⚠️ No tengo trips.';
-    return '📊 <b>Margen contribución por viaje · ' + mlblShort(CUR) + '</b><br>• GP: ' + fmtMm(gp) + 'M<br>• Trips: ' + trips.toLocaleString() + '<br>• <b>GP/Trip: $' + (gp*1e6/trips).toFixed(2) + ' MXN</b>';
+    return '📊 <b>Margen contribución por viaje · ' + mlblShort(CUR) + '</b><br>• GP: ' + fmtMm(gp) + 'M<br>• Trips: ' + trips.toLocaleString() + '<br>• <b>GP/Trip: $' + (gp*1e6/trips).toFixed(1) + ' MXN</b>';
   }
 
   // === Vehiculos fuera de operacion ===
@@ -5108,7 +5108,7 @@ function chatBotAnswer(q){
   if(/% .*incident|porcentaje.+incident|incident.+rate|trips? con incident/i.test(lq)){
     const total = _v2('inc_atfault_total') + _v2('inc_notfault_total');
     const trips = _v2('trips_total');
-    return '⚠️ <b>Incidentes vs Trips · ' + mlblShort(CUR) + '</b><br>• Incidentes total: ' + total + '<br>• Trips: ' + trips.toLocaleString() + '<br>• Rate: <b>' + (trips?(total/trips*100).toFixed(3):'-') + '%</b> (1 incidente por cada ' + (total?Math.round(trips/total).toLocaleString():'-') + ' trips)';
+    return '⚠️ <b>Incidentes vs Trips · ' + mlblShort(CUR) + '</b><br>• Incidentes total: ' + total + '<br>• Trips: ' + trips.toLocaleString() + '<br>• Rate: <b>' + (trips?(total/trips*100).toFixed(1):'-') + '%</b> (1 incidente por cada ' + (total?Math.round(trips/total).toLocaleString():'-') + ' trips)';
   }
 
   // === Decisión urgente / Board urgent ===
