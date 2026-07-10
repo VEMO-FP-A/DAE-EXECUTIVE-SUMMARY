@@ -586,7 +586,6 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <!-- =================== EXECUTIVE SUMMARY =================== -->
 <section class="section active" data-s="exec">
-  <div id="alerts-panel" class="alerts"></div>
   <div id="kpi-cards-grid" class="kpi-grid"></div>
   <div style="font-size:10.5px;color:var(--tx3);font-style:italic;margin:-6px 0 8px 0;letter-spacing:0.02em">Vista: <b>Managerial</b> (Net Income e EBITDA excluyen non-recurrent / FX / intercompany)</div>
   <!-- Chart full-width con dropdown para elegir KPI -->
@@ -789,7 +788,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-07-09 18:16</div>
+  <div>build 2026-07-09 18:19</div>
 </footer>
 
 <script>
@@ -5763,7 +5762,7 @@ function init(){
       _dtEl.innerHTML = '📅 <span style="text-transform:uppercase;letter-spacing:0.06em">Data through ' + (MN_FULL[mm-1] || mm) + ' ' + yy + '</span>';
     }
   } catch(e){ console.warn('data-through-label',e); }
-  try { renderAlerts(); } catch(e){ console.warn('renderAlerts',e); }
+  // renderAlerts removed — panel de alertas quitado del executive summary
   try { renderKPICards(); } catch(e){ console.warn('renderKPICards',e); }
   try { renderExecKpiChart(); } catch(e){ console.warn('renderExecKpiChart',e); }
   try { renderPLVemo('pl-vemo',{simple:true,title:'DAE – <b>P&L Summary</b>'}); } catch(e){ console.warn('renderPLVemo simple',e); }
