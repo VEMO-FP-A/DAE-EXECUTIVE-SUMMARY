@@ -63,7 +63,23 @@
         "title": "Hiring",
         "body": "603 hires (+27.5% MoM) driven by (i) Maria DAE recruiting AI agent (+30% higher conversion vs fully human process); (ii) lead generation provider delivered 9,107 leads (+55% MoM, +24% vs 2025 historical)."
       }
-    ]
+    ],
+    "pnl_revenue": {
+      "bud": "<b>(MXN +$3.4m):</b> Mainly driven by the recognition of 3 days of December in January due to year end-accounting close (<b>ca. +2.0m</b>).",
+      "mom": "<b>(MXN -$13.5m):</b> Mainly driven by (i) the release of a 2025 Uber provision recognized in the prior month (<b>+$10.6m</b>); additionally; and (ii) lower advertising revenues by Ola Media (<b>-$1.4m</b>)."
+    },
+    "pnl_gp": {
+      "bud": "<b>(MXN -$0.7m):</b> Driven by (i) higher Revenues (<b>+$3.4m</b>), offset by a (ii) higher payroll costs (<b>-$2.7m</b>) due to headcount growth (<b>+62 drivers in January</b>) and the payment of three additional days of wages and benefits corresponding to December, (iii) higher maintenance (<b>-$0.7m</b>), (iv) higher Uber Take Rate (<b>-$0.5m</b>) and (v) higher Towing service (<b>-$0.2m</b>).",
+      "mom": "<b>(MXN -$24.8m):</b> Driven by: (i) lower Revenues (<b>-$13.5</b>), (ii) higher labor costs from the minimum wage increase (<b>+13%</b>), therefore higher Driver payments (<b>-$7.5m</b>), (iii) the refund of the Uber Take Rate related to Q4 (<b>-$3.3m</b>), and (iv) higher maintenance due to increased incidents (<b>-$0.5m</b>)."
+    },
+    "pnl_ebitda": {
+      "bud": "<b>(MXN -$0.4m):</b> Driven by: (i) lower GP (<b>-$0.7m</b>). This was affected by (ii) a higher Direct SG&A (<b>-$0.5m</b>), due to an increase related to union expenses (<b>-$0.3m</b>) and higher payroll expense (<b>-$0.2m</b>), and this was offset by (iii) lower CF and Corporate (<b>+$0.8m</b>).",
+      "mom": "<b>(MXN -22.3m):</b> Driven by (i) lower GP (<b>-$24.8m</b>). This was offset by (ii) lower CF and Corp (<b>+$1.5m</b>) and (iii) lower Direct SG&A (<b>+$1.0m</b>)."
+    },
+    "pnl_ni": {
+      "bud": "<b>(MXN +$0.7m):</b> Driven by (i) lower EBITDA (<b>-$0.4m</b>), (ii) higher D&A (<b>-$0.3m</b>) and (iii) lower Interest Expense (<b>+$0.3m</b>) and (iv) lower Taxes (<b>+$1.2m</b>) due to no tax provision this period.",
+      "mom": "<b>(MXN -22.3m):</b> Driven by (i) lower EBITDA (<b>-$22.3m</b>), (ii) higher D&A (<b>+$0.1m</b>) and (iii) lower Interest Expense (<b>-$0.1</b>) and (iv) Taxes in line."
+    }
   },
   "Feb-26": {
     "highlights": [
@@ -89,7 +105,23 @@
         "title": "Supply Hours",
         "body": "Decreased -4.7% MoM (239,344 vs 251,074) but +0.2% above Budget."
       }
-    ]
+    ],
+    "pnl_revenue": {
+      "bud": "<b>(MXN +$4.6m):</b> Mainly driven by higher revenue per hour (<b>$216.6 vs. $196.6</b>); Despite having slightly higher SH <b>0.2%</b>, price per ride was higher (<b>$147.9 vs $139.8</b>), mainly due to six days of environmental contingency.",
+      "mom": "<b>(MXN -$0.4m):</b> Mainly by (i) lower ride hailing revenues Inc. Uber Bonus (<b>-$0.3m</b>), due to 3 additional days in Jan, reflected in lower SH this month (<b>239k vs. 251k</b>); (ii) slightly lower advertising revenues (<b>-$0.1m</b>)."
+    },
+    "pnl_gp": {
+      "bud": "<b>(MXN +$2.3m):</b> Driven by higher revenues (<b>+$4.6m</b>), partially offset by: (i) higher payroll cost (<b>-$1.8m</b>) due to HC growth (<b>+113 drivers in Feb</b>), (ii) higher Uber take rate (<b>-$0.4m</b>) and higher washing costs (<b>-$0.1m</b>). Despite increase in OPEX GPm better than Budget (<b>21.8% vs. 19.2%</b>).",
+      "mom": "<b>(MXN +$4.6m):</b> Driven by lower OPEX (<b>+$5.0m</b>), mainly from (i) lower payroll cost (<b>+$3.3m</b>), due to three additional paid days in Jan, (ii) lower maintenance (<b>+$0.9m</b>), due to the interco adjustments in maintenance rates; (iii) lower towing services (<b>+$0.3m</b>), (iv) and lower marketing expenses (<b>ca. +$0.3m</b>). Partially offset by lower Revenues (<b>-$0.4m</b>)."
+    },
+    "pnl_ebitda": {
+      "bud": "<b>(MXN +$2.3m):</b> Driven by: (i) higher GP (<b>+$2.3m</b>).",
+      "mom": "<b>(MXN +$4.3m):</b> Driven by: (i) higher GP (<b>+$4.6m</b>), and (ii) lower DL G&A (<b>+$0.1m</b>), mainly due to a lower union costs (<b>+ca. 0.2m</b>), offset by higher CF & Corp. SG&A (<b>-$0.6m</b>)."
+    },
+    "pnl_ni": {
+      "bud": "<b>(MXN +$3.1m):</b> Driven by (i) higher EBITDA (<b>+$2.3m</b>), (ii) lower taxes (<b>+$1.2m</b>); and (iii) lower interest expense (<b>+$0.2m</b>), due to higher interest income from cash accounts; partially offset by higher D&A (<b>-$0.5m</b>), due to a higher depreciation from vehicle upgrades and additional fleet (<b>+5 vehicles</b>).",
+      "mom": "<b>(MXN +$4.2m):</b> Driven by higher EBITDA (<b>+$4.3m</b>). Partially offset by slightly higher D&A (<b>ca. -$0.1m</b>)."
+    }
   },
   "Mar-26": {
     "highlights": [
@@ -115,7 +147,23 @@
         "title": "Revenue per Hour",
         "body": "<span class='r'>-8.8% MoM</span> ($197.4 vs $216.6) but <span class='g'>+3.3% vs Budget</span>."
       }
-    ]
+    ],
+    "pnl_revenue": {
+      "bud": "<b>(MXN +$2.3m):</b> Mainly driven by higher revenue per hour (<b>$197.4 vs. $191.2</b>), on account of (i) <b>1.7%</b> higher SH (<b>267K vs. 262K</b>); and (ii) higher price per ride (<b>$142.0 vs. $136.1</b>).",
+      "mom": "<b>(MXN +$0.9m):</b> Mainly driven by (i) higher SH this month (<b>267K vs. 239k</b>), partially offset by lower RPH (<b>$142.0 vs. $147.9</b>)."
+    },
+    "pnl_gp": {
+      "bud": "<b>(MXN +$4.1m):</b> (i) Higher revenues (<b>+$2.3m</b>) and (ii) lower OPEX, primarily from reduced driver payroll (<b>+$1.8m</b>), reflecting a lower average weekly salary (<b>$4,127 vs. $4,517</b>), following changes in driver classification criteria that reduced the number of drivers earning additional incentives.",
+      "mom": "<b>(MXN +$1.7m):</b> Higher revenues (<b>+$0.9</b>), and lower OPEX (<b>+$0.8m</b>), mainly from: (i) lower payroll cost (<b>+$1.2m</b>), driven by lower HC <b>-84</b> (<b>1,493 vs. 1,577</b>). Partially offset by (ii) higher towing expenses (<b>-$0.2m</b>) and (iii) driving penalties (<b>-$0.2m</b>), primarily related to airport fines, which were agreed to be reimbursed by Uber."
+    },
+    "pnl_ebitda": {
+      "bud": "<b>(MXN +$4.6m):</b> Driven by: (i) higher GP (<b>+$4.1m</b>) and lower Corporate Expenses (<b>ca. +$0.5m</b>).",
+      "mom": "<b>(MXN +$2.0m):</b> Driven by: (i) higher GP (<b>+$1.7m</b>), (ii) lower DL G&A (<b>ca. +$0.2m</b>), mainly due to a reduced payroll expense (<b>+$0.4m</b>) from Jan-Feb retroactive adjustments to employee social security partially offset by higher subscriptions costs (<b>-$0.2m</b>)."
+    },
+    "pnl_ni": {
+      "bud": "<b>(MXN +$5.5m):</b> Driven by (i) higher EBITDA (<b>+$4.6m</b>), (ii) lower taxes (<b>+$1.3m</b>); and (iii) lower interest expense (<b>+$0.2m</b>), due to higher interest income from cash accounts; partially offset by higher D&A (<b>-$0.5m</b>), due to higher depreciation from vehicle upgrades.",
+      "mom": "<b>(MXN +$2.0m):</b> In line (<b>+$2.0m</b>)."
+    }
   },
   "Apr-26": {
     "highlights": [
@@ -157,7 +205,23 @@
         "title": "Gross Profit Month",
         "body": "$7.1m, <span class='r'>-50.3% MoM</span> ($14.2m → $7.1m) and <span class='r'>-13.0% vs Budget</span>."
       }
-    ]
+    ],
+    "pnl_revenue": {
+      "bud": "<b>(MXN +$2.8m):</b> Mainly driven by higher RPH (<b>$204.3 vs. $188.6</b>), on account of a higher price per ride <b>+12.7%</b> (<b>$144.8 vs. $128.4</b>), partially offset by <b>-2.8%</b> lower SH (<b>244K vs. 251K</b>).",
+      "mom": "<b>(MXN -$2.1m):</b> Driven by lower SH (<b>244k vs. 267K</b>), on account of a lower PR (<b>73.4% vs. 77.6%</b>). Partially offset by higher RPH (<b>$204.3 vs. $197.4</b>)."
+    },
+    "pnl_gp": {
+      "bud": "<b>(MXN -$1.1m):</b> Driven by higher OPEX (<b>-$3.9m</b>), primarily due to: (a) higher driver payments (<b>-$1.1m</b>), driven by 2 additional payment days not accounted in March; (b) higher maintenance & towing expenses (<b>-$1.4m</b>), (i.e., vehicle campaign rebranding for the World Cup); (c) operating costs associated to higher revenues (<b>-$1.4m</b>) (e.g., Uber TR, washing, telematics).",
+      "mom": "<b>(MXN -$7.2m):</b> Mainly driven by (i) higher OPEX (<b>-$5.1m</b>), primarily due to: (a) higher driver payments (<b>-$3.0m</b>), driven by 4 additional payment days vs. prior month, (b) higher maintenance expense (<b>-$0.4m</b>), driven by increased corrective services (<b>560 vs. 463</b>); and (c) higher operating costs associated to higher revenues (<b>-$1.9m</b>) (e.g., Uber TR, telematics); and (ii) lower revenues (<b>-$2.1m</b>)."
+    },
+    "pnl_ebitda": {
+      "bud": "<b>(MXN -$1.2m):</b> Driven by: (i) lower GP (<b>-$1.1m</b>), (ii) higher DBL expenses (<b>-$0.9m</b>), driven by higher HC and in advance of delta incremental to sustain operations under the LTO leasing to DAE; partially offset by lower CF & Corp. G&A (<b>ca. +$0.7m</b>).",
+      "mom": "<b>(MXN -$6.9m):</b> Driven by: (i) lower GP (<b>-$7.2m</b>), partially offset by (ii) lower SG&A Expenses (<b>+$0.3m</b>), due to: (a) lower DL G&A (<b>+$0.1m</b>) explained by lower Legal expenses (<b>+$0.1m</b>); and (b) lower CF & Corp. G&A (<b>+$0.1m</b>)."
+    },
+    "pnl_ni": {
+      "bud": "<b>(MXN -$0.3m):</b> Driven by (i) lower EBITDA (<b>-$1.2m</b>), (ii) higher D&A (<b>-$0.5m</b>) from vehicle upgrades; partially offset by (iii) lower taxes (<b>+$1.2m</b>), and (iv) lower net interest expense (<b>ca. +$0.3m</b>).",
+      "mom": "<b>(MXN -$6.9m):</b> In line (<b>-$6.9m</b>)."
+    }
   },
   "May-26": {
     "highlights": [
@@ -195,6 +259,22 @@
         "title": "Safety Events",
         "body": "The month recorded <b>171 safety events</b>, concentrated in low-tenure drivers: 33% with less than 30 days, and 49% with less than 60 days."
       }
-    ]
+    ],
+    "pnl_revenue": {
+      "bud": "<b>(MXN +$2.6m):</b> Mainly driven by higher RPH <b>+12.2%</b> (<b>$225.0 vs. $200.6</b>), on account of a higher price per ride <b>+9.4%</b> (<b>$153.7 vs. $140.5</b>), partially offset by lower SH <b>-6.6%</b> (243K vs. 260K).",
+      "mom": "<b>(MXN +$4.8m):</b> Mainly driven by higher RPH <b>+10.1%</b> (<b>$225.0 vs. $204.3</b>), on account of a higher price per ride <b>+6.1%</b> (<b>$153.7 vs. $144.8</b>), slightly offset by lower SH (243K vs. 244K)."
+    },
+    "pnl_gp": {
+      "bud": "<b>(MXN +$1.1m):</b> Driven by (i) higher Revenue (<b>+$2.6m</b>), partially offset by (ii) higher OPEX (<b>-$1.5m</b>), primarily due to: (a) higher maintenance expense (<b>-$0.5m</b>); (b) higher marketing expense (<b>-$0.4m</b>), driven by increased lead generation to support fleet expansion and driver recruitment; (c) higher washing costs (<b>-$0.3m</b>) due to an increase in total fleet (<b>650 vs. 619</b>); and (d) higher Uber TR (<b>-$0.3m</b>) associated with higher revenues.",
+      "mom": "<b>(MXN +$5.5m):</b> Mainly driven by (i) higher revenue (<b>+$4.8m</b>), (ii) lower OPEX (<b>+$0.7m</b>), primarily due to: (a) lower driver payments (<b>+$0.5m</b>), on account of a lower driver HC (<b>1,390 vs. 1,418</b>), (b) lower maintenance expense (<b>+$0.2m</b>), driven by a lower number of services performed (<b>731 vs. 910</b>)."
+    },
+    "pnl_ebitda": {
+      "bud": "<b>(MXN -$2.5m):</b> Driven by (i) higher GP (<b>+$1.1m</b>); partially offset by (ii) higher DBL expenses (<b>-$1.7m</b>), driven by increased HC (<b>154 vs. 80</b>) to support operations associated with a larger total fleet (<b>650 vs. 600</b>); (iii) lower CF & Corp. G&A (<b>-$1.9m</b>).",
+      "mom": "<b>(MXN +$2.0m):</b> Driven by (i) higher GP (<b>+$5.5m</b>), partially offset by (ii) higher DBL expenses (<b>-$0.9m</b>) explained by (a) higher payroll expenses (<b>-$0.6m</b>) due to a higher HC (<b>154 vs. 144</b>), (b) higher insurance and cleaning expenses (<b>-$0.3m</b>) driven by payment phasing; and (iii) higher CF & Corp. G&A (<b>-$2.7m</b>)."
+    },
+    "pnl_ni": {
+      "bud": "<b>(MXN -$1.5m):</b> Driven by (i) lower EBITDA (<b>-$2.5m</b>), (ii) higher D&A (<b>-$0.5m</b>) from vehicle upgrades; partially offset by (iii) lower taxes (<b>+$1.3m</b>), and (iv) lower net interest expense (<b>ca. +$0.3m</b>).",
+      "mom": "<b>(MXN +$2.0m):</b> In line (<b>+$2.0m</b>)."
+    }
   }
 }
