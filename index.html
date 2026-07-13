@@ -773,7 +773,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-07-13 11:51</div>
+  <div>build 2026-07-13 12:45</div>
 </footer>
 
 <script>
@@ -1533,20 +1533,27 @@ const RATIOS = {
     {l:'Hires per DAE recruiter',keys:['hires_per_recruiter'],  unit:'#',     type:'num', agg:'sum', fmt:'int'},
     {l:'HC Recruiters',         keys:['hc_recruiters'],         unit:'#',     type:'num', agg:'avg', fmt:'int'},
     {l:'Headcount',             keys:['headcount'],             unit:'#',     type:'num', agg:'eop', fmt:'int'},
-    // === EoP Drivers Composition (drivers activos al cierre) ===
-    {l:'EoP Oro',               keys:['eop_oro'],               unit:'#',     type:'num', agg:'eop', fmt:'int'},
-    {l:'EoP Plata',             keys:['eop_plata'],             unit:'#',     type:'num', agg:'eop', fmt:'int'},
-    {l:'EoP Bronce',            keys:['eop_bronce'],            unit:'#',     type:'num', agg:'eop', fmt:'int'},
-    {l:'EoP Prin-Oro',          keys:['eop_prin_oro'],          unit:'#',     type:'num', agg:'eop', fmt:'int'},
-    {l:'EoP Prin-Plata',        keys:['eop_prin_plata'],        unit:'#',     type:'num', agg:'eop', fmt:'int'},
-    {l:'EoP Prin-Bronce',       keys:['eop_prin_bronce'],       unit:'#',     type:'num', agg:'eop', fmt:'int'},
-    {l:'EoP Principiante',      keys:['eop_principiante'],      unit:'#',     type:'num', agg:'eop', fmt:'int'},
+    // === EoP Drivers Breakdown — TODOS los niveles en una sola tarjeta expandible ===
+    {l:'EoP Drivers Breakdown', unit:'#', type:'num', agg:'eop', fmt:'int', only2026:true, breakdown:[
+      {l:'Oro',          k:'eop_oro'},
+      {l:'Plata',        k:'eop_plata'},
+      {l:'Bronce',       k:'eop_bronce'},
+      {l:'Prin-Oro',     k:'eop_prin_oro'},
+      {l:'Prin-Plata',   k:'eop_prin_plata'},
+      {l:'Prin-Bronce',  k:'eop_prin_bronce'},
+      {l:'Principiante', k:'eop_principiante'},
+    ]},
     {l:'EoP Total Drivers',     keys:['eop_active_drivers'],    unit:'#',     type:'num', agg:'eop', fmt:'int'},
-    // === Churn Composition (bajas por nivel — datos del Excel actuales en drv_*) ===
-    {l:'Churn Oro',             keys:['drv_oro'],               unit:'#',     type:'num', agg:'sum', fmt:'int'},
-    {l:'Churn Plata',           keys:['drv_plata'],             unit:'#',     type:'num', agg:'sum', fmt:'int'},
-    {l:'Churn Bronce',          keys:['drv_bronce'],            unit:'#',     type:'num', agg:'sum', fmt:'int'},
-    {l:'Churn Principiante',    keys:['drv_principiante'],      unit:'#',     type:'num', agg:'sum', fmt:'int'},
+    // === Churn Breakdown — todos los niveles de bajas en una sola tarjeta expandible ===
+    {l:'Churn Breakdown', unit:'#', type:'num', agg:'sum', fmt:'int', only2026:true, breakdown:[
+      {l:'Oro',          k:'drv_oro'},
+      {l:'Plata',        k:'drv_plata'},
+      {l:'Bronce',       k:'drv_bronce'},
+      {l:'Prin-Oro',     k:'drv_prin_oro'},
+      {l:'Prin-Plata',   k:'drv_prin_plata'},
+      {l:'Prin-Bronce',  k:'drv_prin_bronce'},
+      {l:'Principiante', k:'drv_principiante'},
+    ]},
     {l:'Revenue / Driver',      keys:['revenue_per_driver'],    unit:'MXN$',  type:'num', agg:'avg', fmt:'int'},
     {l:'Avg Pay / Driver (weekly)',keys:['avg_payment_per_driver_daily'],unit:'MXN$',type:'num',agg:'avg',fmt:'n1'},
     {l:'Avg Pay / Driver (monthly)',keys:['avg_payment_per_driver_monthly'],unit:'MXN$',type:'num',agg:'avg',fmt:'int'},
@@ -1614,7 +1621,57 @@ function renderRatioExpandable(targetId, list, sectionTitle){
   let html = sectionTitle ? ('<div class="vemo-section-title">'+sectionTitle+'</div>') : '';
   const hint = mlblShort(RS)+' → '+mlblShort(RE)+' · '+(KPI_RANGE==='ytd'?'YTD '+CURY:'Full history')+' · click section to expand';
   html += '<div class="opmet-wrap"><div class="opmet-hd"><span class="t">Operational Metrics Table</span><span class="hint">'+hint+'</span></div>';
+  // Buscar el indice del primer mes de 2026 (para filtrado only2026)
+  const _idx2026 = (D.months||[]).findIndex(m => m && m.startsWith('2026-01'));
+  const _year2026Start = _idx2026 >= 0 ? _idx2026 : 12;
+
   list.forEach((ki, idx)=>{
+    // === BREAKDOWN: agrupar sub-niveles en UNA sola tarjeta con tabla nested ===
+    if(ki.breakdown && ki.breakdown.length){
+      // Filtrar meses a partir de 2026-01 si only2026
+      const bRS = ki.only2026 ? Math.max(_year2026Start, rangeStart()) : rangeStart();
+      const bRE = rangeEnd();
+      let monthsColsB = '<tr><th>Nivel</th>';
+      for(let i=bRS; i<=bRE; i++) monthsColsB += '<th>'+mlblShort(i)+'</th>';
+      monthsColsB += '<th>Cur ('+mlblShort(CUR)+')</th><th>YTD</th></tr>';
+      let bodyRows = '';
+      const totalByMonth = new Array(bRE - bRS + 1).fill(0);
+      let totalCur = 0, totalYtd = 0;
+      ki.breakdown.forEach(sub => {
+        const arrS = D[sub.k] || [];
+        let row = '<tr><td><b>'+sub.l+'</b></td>';
+        for(let i=bRS, colIdx=0; i<=bRE; i++, colIdx++){
+          const v = ki.agg==='eop' ? (+arrS[i]||0) : (+arrS[i]||0);
+          totalByMonth[colIdx] += v;
+          row += '<td>'+fmtInt(v)+'</td>';
+        }
+        const cur = ki.agg==='eop' ? (+arrS[CUR]||0) : (+arrS[CUR]||0);
+        const ytd = ki.agg==='eop' ? (+arrS[bRE]||0) : (function(){ let s=0; for(let i=bRS;i<=bRE;i++) s+=+arrS[i]||0; return s; })();
+        totalCur += cur;
+        totalYtd += ytd;
+        row += '<td><b>'+fmtInt(cur)+'</b></td><td>'+fmtInt(ytd)+'</td></tr>';
+        bodyRows += row;
+      });
+      // Total row
+      let totalRow = '<tr style="background:#f8fdfd;font-weight:700"><td><b>Total</b></td>';
+      for(let i=0;i<totalByMonth.length;i++) totalRow += '<td>'+fmtInt(totalByMonth[i])+'</td>';
+      totalRow += '<td><b>'+fmtInt(totalCur)+'</b></td><td><b>'+fmtInt(totalYtd)+'</b></td></tr>';
+      bodyRows += totalRow;
+      const summaryB = '<b>'+mlbl(CUR)+': '+fmtInt(totalCur)+'</b> · '+ki.breakdown.length+' levels';
+      html += '<div class="opmet-row" data-idx="'+idx+'">'+
+        '<div class="hd">'+
+          '<span class="num">'+(idx+1)+'</span>'+
+          '<span class="l">'+ki.l+'</span>'+
+          '<span class="v">'+summaryB+'</span>'+
+          '<span class="car">▶</span>'+
+        '</div>'+
+        '<div class="opmet-body">'+
+          '<table class="opmet-tbl"><thead>'+monthsColsB+'</thead><tbody>'+bodyRows+'</tbody></table>'+
+        '</div>'+
+      '</div>';
+      return;
+    }
+
     let A = [], B = [];
     if(ki.computed && ki.numer && ki.denom){
       const Na = D[ki.numer] || [], Da = D[ki.denom] || [];
