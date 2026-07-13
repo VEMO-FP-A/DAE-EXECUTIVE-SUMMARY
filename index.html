@@ -773,7 +773,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-07-12 15:32</div>
+  <div>build 2026-07-13 11:51</div>
 </footer>
 
 <script>
@@ -2339,51 +2339,44 @@ function renderEbitdaBridge(){
   const ebitdaBud = sB(ebitdaKey);
   const ebitdaAct = sA(ebitdaKey);
 
-  // Variance por linea = (Actual - Budget), pero con signo correcto:
-  // Revenue/GP: positivo si actual > budget → mejora EBITDA
-  // OPEX/SG&A/D&A/etc (costos): positivo si actual < budget → mejora EBITDA (reducimos costos)
-  function varRev(k){ return sA(k) - sB(k); }         // Revenue side
-  function varCost(k){ return sB(k) - sA(k); }         // Cost side: budget - actual (favorable = actual bajo budget)
+  // Variance por linea = (Actual - Budget), con signo correcto:
+  //   Revenue side: positivo si actual > budget -> mejora EBITDA
+  //   Cost side:    positivo si actual < budget -> mejora EBITDA (menos costo)
+  function varRev(k){ return sA(k) - sB(k); }
+  function varCost(k){ return sB(k) - sA(k); }
 
-  // Steps del bridge:
-  //  Start: EBITDA Budget
-  //  + Revenue variance
-  //  + Driver Payments variance (cost)
-  //  + Maintenance variance
-  //  + Marketing variance
-  //  + Uber Take Rate variance
-  //  + Other OPEX variance (resto de OPEX no explicado arriba)
-  //  + SG&A variance
-  //  End: EBITDA Actual
+  // Variances individuales de cada linea de OPEX
+  const revVar       = varRev('revenue');
+  const dpVar        = varCost('driver_payments');
+  const evfuelVar    = varCost('ev_fuel_cost');
+  const maintVar     = varCost('maintenance_opex');
+  const mktVar       = varCost('marketing');
+  const utrVar       = varCost('uber_take_rate');
+  const sgaVar       = varCost('corporate_expenses');
+  // OPEX sub-lineas: agrupar por naturaleza (labor, vehicle ops, resto)
+  const wagesVar     = varCost('wages_opex') + varCost('bonus_opex') + varCost('benefits_opex');
+  const leaseVar     = varCost('lease_payment_calgary');
+  const insVar       = varCost('insurance_opex');
+  const vehOpsVar    = varCost('towing_service') + varCost('washing') + varCost('driving_penalties') +
+                       varCost('telematics_opex') + varCost('training_cost') +
+                       varCost('charging_infra') + varCost('chaas') + varCost('security') +
+                       varCost('other_ce_opex');
 
-  const revVar = varRev('revenue');
-  const dpVar = varCost('driver_payments');
-  const maintVar = varCost('maintenance_opex');
-  const mktVar = varCost('marketing');
-  const utrVar = varCost('uber_take_rate');
-  const evfuelVar = varCost('ev_fuel_cost');
-  const opexTotalVar = varCost('opex');
-  const sgaVar = varCost('corporate_expenses');
-  // === Buckets agregados ===
-  // COGS = costos variables directos (Driver Payments + EV/Fuel + Maintenance)
-  const cogsVar = dpVar + evfuelVar + maintVar;
-  // OPEX = Marketing + Uber Take Rate + resto de OPEX no COGS
-  const otherOpexResidual = opexTotalVar - dpVar - maintVar - mktVar - utrVar - evfuelVar;
-  const opexVar = mktVar + utrVar + otherOpexResidual;
-  // ΔOther = plug para cerrar el bridge (D&A, non-op, redondeos)
-  const totalExplained = revVar + cogsVar + opexVar + sgaVar;
-  const totalActualDelta = ebitdaAct - ebitdaBud;
-  const otherVar = totalActualDelta - totalExplained;
-
-  // Color distintivo para totales (primero y ultimo) - navy oscuro VEMO
+  // Color para totales (primero y ultimo) - navy dark VEMO
   const TOTAL_COLOR = '#1F5454';
   const steps = [
     {l:'Budget EBITDA',   val: ebitdaBud,   type:'total', color:TOTAL_COLOR},
     {l:'ΔRevenue',        val: revVar,      type:'var'},
-    {l:'ΔCOGS',           val: cogsVar,     type:'var'},
-    {l:'ΔOPEX',           val: opexVar,     type:'var'},
+    {l:'ΔDriver Pay',     val: dpVar,       type:'var'},
+    {l:'ΔEV/Fuel',        val: evfuelVar,   type:'var'},
+    {l:'ΔMaintenance',    val: maintVar,    type:'var'},
+    {l:'ΔMarketing',      val: mktVar,      type:'var'},
+    {l:'ΔUber Take Rate', val: utrVar,      type:'var'},
+    {l:'ΔWages/Ben.',     val: wagesVar,    type:'var'},
+    {l:'ΔLease Pay',      val: leaseVar,    type:'var'},
+    {l:'ΔInsurance',      val: insVar,      type:'var'},
+    {l:'ΔVehicle Ops',    val: vehOpsVar,   type:'var'},
     {l:'ΔSG&A',           val: sgaVar,      type:'var'},
-    {l:'ΔOther',          val: otherVar,    type:'var'},
     {l:'Actual EBITDA',   val: ebitdaAct,   type:'total', color:TOTAL_COLOR},
   ];
 
