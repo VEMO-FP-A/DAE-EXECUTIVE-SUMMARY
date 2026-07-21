@@ -773,7 +773,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-07-20 20:17</div>
+  <div>build 2026-07-20 20:23</div>
 </footer>
 
 <script>
@@ -6058,6 +6058,13 @@ function setupVemoGame(){
     else if(e.key === 'ArrowRight' || e.key === 'd'){ player.lane = Math.min(2, player.lane + 1); player.targetX = LANES_X[player.lane]; }
     else if(e.key === ' '){ e.preventDefault(); if(!running){ reset(); loop(); } }
   });
+}
+
+// ============ BOOT: arrancar el dashboard al cargar ============
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
 }
 </script>
 
