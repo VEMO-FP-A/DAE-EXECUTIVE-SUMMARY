@@ -102,7 +102,8 @@ body.dark-mode .kpi-spark svg path[stroke="#1F5454"]{stroke:#9aa3ac!important}
 .vemo-tbl tbody td{border-bottom:1px solid #ececec;color:#222;background:#fff;text-align:center !important}
 .vemo-tbl tbody td.lbl{background:#168888 !important;color:#fff !important;font-weight:700;padding-left:16px;padding-right:14px;text-align:left !important;border-right:none;cursor:default;border-bottom:1px solid rgba(255,255,255,0.10);min-width:200px}
 .vemo-tbl tbody td.lbl.sub{padding-left:36px;font-weight:500;font-size:11px;color:rgba(255,255,255,0.95);background:#168888}
-.vemo-tbl tbody td.lbl.sub2{padding-left:54px;font-weight:400;font-size:10.5px;color:rgba(255,255,255,0.88);background:#168888}
+.vemo-tbl tbody td.lbl.sub2{padding-left:56px;font-weight:400;font-size:10.5px;color:rgba(255,255,255,0.88);background:#168888}
+.vemo-tbl tbody td.lbl.sub3{padding-left:78px;font-weight:400;font-size:10.5px;color:rgba(255,255,255,0.82);background:#168888}
 .vemo-tbl tbody td.lbl.italic{font-style:italic;font-weight:500;color:rgba(255,255,255,0.85);font-size:11px;background:#168888}
 .vemo-tbl tbody td.italic{font-style:italic;color:#888;font-size:10.5px}
 /* Coloreado de valores: rojo = malo, teal = bueno (segun convencion del SS) */
@@ -110,11 +111,11 @@ body.dark-mode .kpi-spark svg path[stroke="#1F5454"]{stroke:#9aa3ac!important}
 .vemo-tbl tbody td.pos{color:#117A45;font-weight:700}
 .vemo-tbl tbody td.cur{background:#f6fcfc}
 /* Subtotales: fondo teal mas marcado en label y light gray en celdas */
-.vemo-tbl tbody tr.subtot td{background:#fff;font-weight:700;color:#1F5454;font-size:11.5px}
+.vemo-tbl tbody tr.subtot td{background:#d4edec !important;font-weight:700;color:#1F5454;font-size:11.5px}
 .vemo-tbl tbody tr.exp td{font-weight:700;color:#1F5454}
 .vemo-tbl tbody tr.child td:not(.lbl){font-weight:400}
 .vemo-tbl tbody tr.subtot td.lbl{background:#11ABAB !important;color:#fff !important;font-weight:700;letter-spacing:0.01em;font-size:12px}
-.vemo-tbl tbody tr.subtot td.cur{background:#cee9e9}
+.vemo-tbl tbody tr.subtot td.cur{background:#bfe4e3 !important;border-left:2px solid #7BDADA;border-right:2px solid #7BDADA}
 .vemo-tbl tbody tr.subtot td.neg{color:var(--red)}
 .vemo-tbl tbody tr.subtot td.pos{color:#168888}
 .vemo-tbl tbody tr.sep td{height:8px;background:#fff;border:none;padding:0}
@@ -773,7 +774,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-07-26 20:52</div>
+  <div>build 2026-07-26 21:01</div>
 </footer>
 
 <script>
@@ -1275,7 +1276,7 @@ function rowMm(key,label,opts){
   function cdev(v){ if(v==null||isNaN(v)) return '<td>—</td>'; const nv=opts.invert?-v:v; const cls=nv<0?'neg':(nv>0?'pos':''); return '<td class="'+cls+'">'+fmtMm(v)+'</td>'; }
   function cpct(v,ref){ if(!ref||isNaN(ref)) return '<td>n.m.</td>'; const p=v/Math.abs(ref)*100; const nv=opts.invert?-p:p; const cls=nv<0?'neg':(nv>0?'pos':''); return '<td class="'+cls+'">'+fmtPct(p,1)+'</td>'; }
   const trCls=(opts.subtotal?'subtot ':'')+(opts.exp?'exp ':'')+(opts.child?'child ':'')+(opts.dataset||'');
-  const lblCls='lbl'+(opts.indent?' sub':'')+(opts.indent2?' sub2':'')+(opts.italic?' italic':'');
+  const lblCls='lbl'+(opts.indent?' sub':'')+(opts.indent2?' sub2':'')+(opts.indent3?' sub3':'')+(opts.italic?' italic':'');
   // FIX: una fila puede ser HIJA (data-parent) Y a la vez padre de otros (data-id) — antes solo se ponia una de las dos
   let trAttr='';
   if(opts.parent) trAttr += 'data-parent="'+opts.parent+'" ';
@@ -1461,6 +1462,7 @@ function buildPLRows(simple){
       invert: line.invert,
       indent: depth===1,
       indent2: depth===2,
+      indent3: depth>=3,
       exp: hasChildren,
       id: id,
       parent: parentId,
