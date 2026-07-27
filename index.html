@@ -778,7 +778,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-07-27 11:38</div>
+  <div>build 2026-07-27 11:54</div>
 </footer>
 
 <script>
@@ -1988,10 +1988,21 @@ function renderRatioCharts(containerId, chartDefs){
 // Mapeo charts por sub-tab
 const RATIO_CHARTS = {
   main: [
-    {k:'performance_ratio', l:'Performance Ratio', type:'pct', agg:'avg'},
-    {k:'utilization', l:'Utilization', type:'pct', agg:'avg'},
-    {k:'revenue_per_hour', l:'Revenue Per Hour', agg:'avg', fmt:'n1'},
-    {k:'trips_total', l:'Trips', agg:'sum', fmt:'k'},
+    // Un chart por cada KPI de la tabla Main KPIs (mismos que las tarjetas del Exec Summary)
+    {keys:['performance_ratio'], l:'Performance Ratio', type:'pct', agg:'avg'},
+    {keys:['performance_ratio_exc_lto'], l:'Performance Ratio Exc. LTO', type:'pct', agg:'avg'},
+    {keys:['supply_hours','time_online'], l:'Supply Hours', agg:'sum', fmt:'int'},
+    {keys:['revenue_per_hour','rev_per_hour_vemo'], l:'Revenue Per Hour (RPH)', agg:'avg', fmt:'n1'},
+    {keys:['utilization'], l:'Utilization', type:'pct', agg:'avg'},
+    {keys:['trips_total','trips_completed'], l:'Trips', agg:'sum', fmt:'k'},
+    {keys:['eop_active_drivers','active_drivers'], l:'Active Drivers (EoP)', agg:'eop', fmt:'int'},
+    {keys:['fill_rate_eop','fill_rate_avg'], l:'Driver Fill Rate (EoP)', type:'pct', agg:'eop'},
+    {keys:['total_fleet'], l:'Total Fleet', agg:'eop', fmt:'int'},
+    {keys:['operational_vehicles'], l:'Active Fleet', agg:'eop', fmt:'int'},
+    {keys:['oos_pct','oos','inactivity_rate'], l:'OOS', type:'pct', agg:'avg'},
+    {keys:['maintenance_per_km'], l:'Maintenance per km', agg:'avg', fmt:'n2'},
+    {keys:['inc_atfault_total'], l:'Total Incidents', agg:'sum', fmt:'int'},
+    {keys:['hires_per_recruiter'], l:'Hires per DAE recruiter', agg:'sum', fmt:'int'},
   ],
   op: [
     // Orden = mismo que la tabla abajo (RATIOS.op)
