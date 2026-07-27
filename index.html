@@ -92,14 +92,14 @@ body.dark-mode .kpi-spark svg path[stroke="#1F5454"]{stroke:#9aa3ac!important}
 /* Sub-headers (Apr-25 Mar-26 Apr-26 YTD, Budget cols, YoY MoM, etc.): bright teal */
 .vemo-tbl thead.sub th{background:#11ABAB !important;color:#fff !important;font-weight:700;font-size:11px;padding:11px 8px;border-right:2px solid #fff !important;border-top:0;text-align:center;line-height:1.2;letter-spacing:0.02em;text-transform:none}
 /* Highlighted columns (mes actual, YTD, Budget actual, Budget YTD, vs Budget, vs Budget YTD): MINT */
-.vemo-tbl thead.sub th.cur{background:#7BDADA !important;color:#fff !important;font-weight:700;border-left:2px solid #fff !important}
+.vemo-tbl thead.sub th.cur{background:#7BDADA !important;color:#fff !important;font-weight:700}
 /* En el body, cur columns: mint suave */
-.vemo-tbl tbody td.cur{background:#e3f4f4 !important;border-left:2px solid #fff;border-right:2px solid #fff}
+.vemo-tbl tbody td.cur{background:#e3f4f4 !important;border-left:0;border-right:0}
 /* GROUP-END: divisor de grupo UNIFICADO a 4px en las 3 capas (grp th, sub th, body td)
    para que el corte entre grupos quede alineado de arriba a abajo. Selectores muy
    especificos + !important para ganar a las reglas de .cur / thead.sub. */
 .vemo-tbl thead.grp th.gend,.vemo-tbl thead.sub th.gend,.vemo-tbl tbody td.gend{border-right:4px solid #fff !important}
-.vemo-tbl tbody tr.subtot td.cur{background:#bfe4e3;border-left:2px solid #fff;border-right:2px solid #fff}
+.vemo-tbl tbody tr.subtot td.cur{background:#bfe4e3;border-left:0;border-right:0}
 /* Primera columna (P&L MXNm): teal deep */
 .vemo-tbl thead th.firstcol{background:#168888 !important;color:#fff !important;text-align:left;padding-left:16px;font-style:normal;font-weight:700;font-size:13px;border-top:0;border-bottom:none}
 /* SS PPT body: columna izquierda TEAL CONTINUA, body cells BLANCAS y CENTRADAS */
@@ -119,7 +119,7 @@ body.dark-mode .kpi-spark svg path[stroke="#1F5454"]{stroke:#9aa3ac!important}
 .vemo-tbl tbody tr.exp td{font-weight:700;color:#1F5454}
 .vemo-tbl tbody tr.child td:not(.lbl){font-weight:400}
 .vemo-tbl tbody tr.subtot td.lbl{background:#11ABAB !important;color:#fff !important;font-weight:700;letter-spacing:0.01em;font-size:12px}
-.vemo-tbl tbody tr.subtot td.cur{background:#bfe4e3 !important;border-left:2px solid #fff;border-right:2px solid #fff}
+.vemo-tbl tbody tr.subtot td.cur{background:#bfe4e3 !important;border-left:0;border-right:0}
 .vemo-tbl tbody tr.subtot td.neg{color:var(--red)}
 .vemo-tbl tbody tr.subtot td.pos{color:#168888}
 .vemo-tbl tbody tr.sep td{height:8px;background:#fff;border:none;padding:0}
@@ -778,7 +778,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-07-27 11:16</div>
+  <div>build 2026-07-27 11:31</div>
 </footer>
 
 <script>
