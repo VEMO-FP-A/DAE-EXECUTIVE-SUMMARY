@@ -600,7 +600,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
       <select id="exec-kpi-picker" style="margin-left:auto;font-family:inherit;font-size:11px;padding:5px 10px;border:1px solid rgba(255,255,255,0.30);background:rgba(255,255,255,0.10);color:#fff;border-radius:5px;cursor:pointer;font-weight:600"></select>
       <div class="chart-toggles">
         <label><input type="checkbox" id="exec-kpi-bud" checked> Budget</label>
-        <label><input type="checkbox" id="exec-kpi-proj"> Forecast</label>
+        <label><input type="checkbox" id="exec-kpi-proj"> Run-Rate</label>
       </div>
     </div>
     <div class="chart-body" style="height:300px"><canvas id="exec-kpi-canvas"></canvas></div>
@@ -778,7 +778,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-07-27 11:54</div>
+  <div>build 2026-07-27 11:59</div>
 </footer>
 
 <script>
@@ -1912,7 +1912,7 @@ function renderRatioCharts(containerId, chartDefs){
       '<div class="chart-hd"><span class="t">'+cd.l+'</span><span class="stats">'+stat+'</span>'+
       '<div class="chart-toggles">'+
         (hasBud ? '<label><input type="checkbox" data-toggle="bud" data-card="'+containerId+'-c'+i+'" checked> Budget</label>' : '')+
-        '<label><input type="checkbox" data-toggle="proj" data-card="'+containerId+'-c'+i+'"> Forecast</label>'+
+        '<label><input type="checkbox" data-toggle="proj" data-card="'+containerId+'-c'+i+'"> Run-Rate</label>'+
       '</div></div>'+
       '<div class="chart-body"><canvas id="'+containerId+'-c'+i+'"></canvas></div></div>';
   });
@@ -2220,7 +2220,7 @@ function makeLineChart(canvasId,label,data,opts){
       proj[i] = ma;
       workBuf.push(ma); // feed forward
     }
-    datasets.push({label:'Forecast (3M MA)',data:proj,borderColor:'#7BDADA',backgroundColor:'rgba(123,218,218,0.15)',borderDash:[3,3],fill:false,tension:0.32,borderWidth:1.5,pointRadius:2,pointBackgroundColor:'#7BDADA',spanGaps:false});
+    datasets.push({label:'Run-Rate (3M MA)',data:proj,borderColor:'#7BDADA',backgroundColor:'rgba(123,218,218,0.15)',borderDash:[3,3],fill:false,tension:0.32,borderWidth:1.5,pointRadius:2,pointBackgroundColor:'#7BDADA',spanGaps:false});
   }
   // FIX: combinar Actuals + Budget + Forecast para el rango del eje Y
   // (antes solo consideraba Actuals -> la linea de budget se salia del viewport
@@ -2724,7 +2724,7 @@ function renderPLCharts(){
       '<div class="chart-hd"><span class="t">'+ln.l+'</span><span class="stats">'+stat+'</span>'+
       '<div class="chart-toggles">'+
         (_plHasBud ? '<label><input type="checkbox" data-toggle="bud" data-idx="'+i+'" checked> Budget</label>' : '')+
-        '<label><input type="checkbox" data-toggle="proj" data-idx="'+i+'"> Forecast</label>'+
+        '<label><input type="checkbox" data-toggle="proj" data-idx="'+i+'"> Run-Rate</label>'+
       '</div></div>'+
       '<div class="chart-body"><canvas id="plc-'+i+'"></canvas></div></div>';
   });
