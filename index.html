@@ -596,7 +596,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
   <!-- Chart full-width con dropdown para elegir KPI -->
   <div class="chart-card" style="margin-bottom:22px">
     <div class="chart-hd" style="gap:12px">
-      <span class="t">Trend de KPI</span>
+      <span class="t">KPI Trend</span>
       <select id="exec-kpi-picker" style="margin-left:auto;font-family:inherit;font-size:11px;padding:5px 10px;border:1px solid rgba(255,255,255,0.30);background:rgba(255,255,255,0.10);color:#fff;border-radius:5px;cursor:pointer;font-weight:600"></select>
       <div class="chart-toggles">
         <label><input type="checkbox" id="exec-kpi-bud" checked> Budget</label>
@@ -781,7 +781,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-07-28 11:29</div>
+  <div>build 2026-07-28 11:55</div>
 </footer>
 
 <script>
@@ -2016,7 +2016,7 @@ function renderRatioCharts(containerId, chartDefs){
       const A = arrCand(cd.keys || [cd.k]);
       if(!A.length) return;
       const B = barrCand(cd.keys || [cd.k]);
-      const yfmt = cd.type==='pct' ? (v=>(v*100).toFixed(0)+'%') : (cd.fmt==='int'?(v=>v.toLocaleString()):undefined);
+      const yfmt = cd.type==='pct' ? (v=>(v*100).toFixed(0)+'%') : (cd.fmt==='int'?(v=>Math.round(v).toLocaleString()):(v=>{const r=Math.round(v*10)/10;return r.toLocaleString(undefined,{maximumFractionDigits:1});}));
       const canvasId = containerId+'-c'+i;
       const card = document.getElementById(canvasId)?.closest('.chart-card');
       const showBud = card?.querySelector('[data-toggle="bud"]')?.checked ?? false;
@@ -2348,6 +2348,10 @@ function makeLineChart(canvasId,label,data,opts){
       grid:{display:false}
     };
   }
+  // Formateador de tooltip: usa yfmt si existe (int/pct); si no, max 1 decimal
+  const _tipFmt = (typeof opts.yfmt === 'function')
+    ? opts.yfmt
+    : function(v){ if(v==null||isNaN(v)) return ''; const r=Math.round(v*10)/10; return r.toLocaleString(undefined,{maximumFractionDigits:1}); };
   return new Chart(ctx,{
     type:'line',data:{labels,datasets},
     options:{
@@ -2355,7 +2359,7 @@ function makeLineChart(canvasId,label,data,opts){
       interaction:{intersect:false,mode:'index'},
       plugins:{
         legend:{display:datasets.length>1,position:'bottom',labels:{font:{family:'Space Grotesk',size:10},boxWidth:14,padding:8}},
-        tooltip:{enabled:true}
+        tooltip:{enabled:true, callbacks:{label:function(c){ return c.dataset.label+': '+_tipFmt(c.parsed.y); }}}
       },
       scales: scales
     }
@@ -2419,7 +2423,7 @@ function renderExecKpiChart(){
   const B = barrCand(ki.keys);
   const showBud = document.getElementById('exec-kpi-bud')?.checked;
   const showProj = document.getElementById('exec-kpi-proj')?.checked;
-  const yfmt = ki.type==='pct' ? (v=>(v*100).toFixed(0)+'%') : (ki.fmt==='int'?(v=>v.toLocaleString()):undefined);
+  const yfmt = ki.type==='pct' ? (v=>(v*100).toFixed(0)+'%') : (ki.fmt==='int'?(v=>Math.round(v).toLocaleString()):(v=>{const r=Math.round(v*10)/10;return r.toLocaleString(undefined,{maximumFractionDigits:1});}));
   if(__EXEC_KPI_CHART) __EXEC_KPI_CHART.destroy();
   __EXEC_KPI_CHART = makeLineChart('exec-kpi-canvas', ki.l, A, {budget:showBud?B:null, projection:showProj, yfmt});
 }
