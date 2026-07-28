@@ -782,7 +782,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-07-28 16:44</div>
+  <div>build 2026-07-28 17:13</div>
 </footer>
 
 <script>
@@ -2243,6 +2243,36 @@ function smartYRange(series){
 }
 
 let __SEASON_CHARTS = {};
+// Plugin custom: etiqueta de dato sobre cada punto de la serie principal (Actuals).
+// Series secundarias (Budget, Run-Rate, margen) se marcan __noLabels para no saturar.
+// NO se registra en el modo Seasonality (ese chart se crea aparte, sin este plugin).
+const lineDataLabelsPlugin = {
+  id:'lineDataLabels',
+  afterDatasetsDraw(chart){
+    const ctx=chart.ctx;
+    let drawn=0;
+    chart.data.datasets.forEach((ds,di)=>{
+      const meta=chart.getDatasetMeta(di);
+      if(meta.hidden || ds.__noLabels) return;
+      const fmt = (typeof ds.__labelFmt==='function') ? ds.__labelFmt
+        : function(v){ if(v==null||isNaN(v)) return ''; const r=Math.round(v*10)/10; return r.toLocaleString(undefined,{maximumFractionDigits:1}); };
+      const offset = 6 + drawn*10;  // stagger si hubiera varias series con label
+      ctx.save();
+      ctx.font='9px "Space Grotesk", sans-serif';
+      ctx.textAlign='center';
+      ctx.textBaseline='bottom';
+      ctx.fillStyle = ds.borderColor || '#333';
+      (meta.data||[]).forEach((pt,pi)=>{
+        const v=ds.data[pi];
+        if(v==null||isNaN(v)) return;
+        const pos=pt.tooltipPosition();
+        ctx.fillText(fmt(v), pos.x, pos.y-offset);
+      });
+      ctx.restore();
+      drawn++;
+    });
+  }
+};
 function makeLineChart(canvasId,label,data,opts){
   opts=opts||{};
   const ctx=document.getElementById(canvasId); if(!ctx) return;
@@ -2263,11 +2293,13 @@ function makeLineChart(canvasId,label,data,opts){
     const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     const byYear={};
     for(let i=0;i<D.months.length;i++){
+      if(i>LI) continue; // solo meses con actuals (evita meses futuros vacios)
       const m=D.months[i]; if(!m) continue;
       const parts=m.split('-'); const yr=parts[0]; const mo=+parts[1]-1;
       if(!byYear[yr]) byYear[yr]=new Array(12).fill(null);
       const v=(data||[])[i];
-      byYear[yr][mo]=(v==null||isNaN(v))?null:v;
+      // Tratar valores ~0 como sin-dato (meses sin actuals reales) para no ensuciar el rango
+      byYear[yr][mo]=(v==null||isNaN(v)||Math.abs(v)<1e-6)?null:v;
     }
     if(opts.hist2024 && opts.hist2024.some(v=>v!=null&&v!==0)) byYear['2024']=opts.hist2024.slice(0,12).map(v=>(v==null||isNaN(v))?null:v);
     const yrColors={'2023':'#9aa3ac','2024':'#C0392B','2025':'#1F5454','2026':'#11ABAB'};
@@ -2279,72 +2311,77 @@ function makeLineChart(canvasId,label,data,opts){
         pointBackgroundColor:(yrColors[yr]||'#888'), pointHoverRadius:5, spanGaps:false,
         borderDash:(yr==='2024'?[5,3]:[])};
     });
+    // Eje Y ACOTADO al rango de los datos (NO desde cero) para ver mejor el movimiento estacional
+    const _allV=[];
+    sdatasets.forEach(function(ds){ ds.data.forEach(function(v){ if(v!=null&&!isNaN(v)) _allV.push(v); }); });
+    let _yMin, _yMax;
+    if(_allV.length){
+      const _mn=Math.min(..._allV), _mx=Math.max(..._allV), _rng=(_mx-_mn)||Math.abs(_mx)||1;
+      const _pad=_rng*0.10;
+      _yMin=_mn-_pad; _yMax=_mx+_pad;
+    }
     if(__SEASON_CHARTS[canvasId]){ try{__SEASON_CHARTS[canvasId].destroy();}catch(e){} }
     const _ch=new Chart(ctx,{type:'line',data:{labels:MN,datasets:sdatasets},
       options:{responsive:true,maintainAspectRatio:false,interaction:{intersect:false,mode:'index'},
         plugins:{legend:{display:true,position:'bottom',labels:{font:{family:'Space Grotesk',size:11},boxWidth:14,padding:10}},
           tooltip:{enabled:true,callbacks:{label:function(c){return c.dataset.label+': '+_tf(c.parsed.y);}}}},
         scales:{x:{ticks:{font:{family:'Space Grotesk',size:9},color:'#888'},grid:{display:false}},
-          y:{beginAtZero:true,ticks:{font:{family:'Space Grotesk',size:9},color:'#888',callback:_tf},grid:{color:'rgba(0,0,0,0.05)'}}}}
+          y:{min:_yMin,max:_yMax,ticks:{font:{family:'Space Grotesk',size:9},color:'#888',callback:_tf},grid:{color:'rgba(0,0,0,0.05)'}}}}
     });
     __SEASON_CHARTS[canvasId]=_ch;
     return _ch;
   }
-  // FIX: Trim X-axis al horizonte real (LI + 3 meses adelante max)
-  const MAX_X = Math.min(D.months.length, LI + 4); // LI + 3 ahead + cushion
-  const labels=D.months.slice(0, MAX_X).map((_,i)=>mlblShort(i));
-  const slice=(a)=>(a||[]).slice(0,LI+1).concat(new Array(Math.max(0,MAX_X-LI-1)).fill(null));
-  const main=slice(data);
+  // Formateador de tooltip/label: usa yfmt si existe (int/pct); si no, max 1 decimal
+  const _tipFmt = (typeof opts.yfmt === 'function')
+    ? opts.yfmt
+    : function(v){ if(v==null||isNaN(v)) return ''; const r=Math.round(v*10)/10; return r.toLocaleString(undefined,{maximumFractionDigits:1}); };
+  // === X-AXIS AUTO-SCALE ===
+  // Inicio = primer mes con valor REAL (no null, no ~0) → evita meses en blanco al inicio.
+  let startIdx = 0, _fset=false;
+  for(let i=0;i<=LI;i++){ const v=(data||[])[i]; if(v!=null && !isNaN(v) && Math.abs(v)>1e-6){ startIdx=i; _fset=true; break; } }
+  if(!_fset) startIdx=0;
+  // Ultimo mes con dato REAL de ESTA serie (puede ser < LI si el ultimo mes no tiene dato).
+  let lastRealIdx = startIdx;
+  for(let i=startIdx;i<=LI;i++){ const v=(data||[])[i]; if(v!=null && !isNaN(v) && Math.abs(v)>1e-6) lastRealIdx=i; }
+  // Fin = ultimo actual real; +3 meses SOLO si Run-Rate esta activo.
+  const endIdx = opts.projection ? Math.min(D.months.length-1, lastRealIdx+3) : lastRealIdx;
+  const winLen = Math.max(1, endIdx - startIdx + 1);
+  const labels=[]; for(let j=0;j<winLen;j++) labels.push(mlblShort(startIdx+j));
+  // Serie principal (Actuals): solo hasta el ultimo mes real
+  const main=[]; for(let i=startIdx;i<=endIdx;i++) main.push(i<=lastRealIdx ? ((data||[])[i]) : null);
   const datasets=[{
     label,data:main,
     borderColor:'#11ABAB',backgroundColor:'rgba(123,218,218,0.30)',
     fill:'origin',tension:0.32,borderWidth:2,
-    pointRadius:2.5,pointBackgroundColor:'#168888',pointBorderColor:'#168888',pointHoverRadius:5
+    pointRadius:2.5,pointBackgroundColor:'#168888',pointBorderColor:'#168888',pointHoverRadius:5,
+    __labelFmt:_tipFmt  // solo la serie principal lleva etiquetas de dato
   }];
+  const _yRangeVals = main.filter(v=>v!=null&&!isNaN(v));
   if(opts.budget&&opts.budget.length&&opts.budget.some(v=>v!=null&&v!==0)){
     let lastB=0; for(let i=0;i<opts.budget.length;i++) if(opts.budget[i]!=null&&opts.budget[i]!==0) lastB=i;
-    const maxIdx = Math.min(lastB, MAX_X-1);
     // Budget SOLO 2026+ (en 2025 el budget = actuals, no aporta graficarlo)
     let bud2026Start = 0;
     for(let i=0; i<D.months.length; i++){ if(D.months[i] && D.months[i].startsWith('2026-01')){ bud2026Start=i; break; } }
     const b = [];
-    for(let i=0; i<MAX_X; i++){
+    for(let i=startIdx;i<=endIdx;i++){
       const v = opts.budget[i];
-      if(i < bud2026Start || i > maxIdx || v == null || v === 0) b.push(null);
-      else b.push(v);
+      if(i < bud2026Start || i > lastB || v == null || v === 0) b.push(null);
+      else { b.push(v); _yRangeVals.push(v); }
     }
-    datasets.push({label:'Budget',data:b,borderColor:'#1F5454',backgroundColor:'transparent',borderDash:[6,4],fill:false,tension:0.20,borderWidth:1.5,pointRadius:0,pointHoverRadius:3,spanGaps:false});
+    datasets.push({label:'Budget',data:b,borderColor:'#1F5454',backgroundColor:'transparent',borderDash:[6,4],fill:false,tension:0.20,borderWidth:1.5,pointRadius:0,pointHoverRadius:3,spanGaps:false,__noLabels:true});
   }
   if(opts.projection&&main.filter(v=>v!=null).length>=3){
-    const proj=new Array(MAX_X).fill(null);
-    // FIX 1: prepend last actual so dashed line connects continuously
-    proj[LI] = main[LI];
-    // FIX 2: rolling 3M MA — each new projection feeds into the next window
-    const workBuf = main.slice(0, LI+1).filter(v=>v!=null);
-    const projEnd = Math.min(LI+4, MAX_X);
-    for(let i=LI+1; i<projEnd; i++){
+    const proj=new Array(winLen).fill(null);
+    const liPos = lastRealIdx - startIdx;      // posicion del ultimo actual real en la ventana
+    if(liPos>=0 && liPos<winLen) proj[liPos] = (data||[])[lastRealIdx];   // anclar al ultimo actual (sin gap)
+    const workBuf = []; for(let i=startIdx;i<=lastRealIdx;i++){ const v=(data||[])[i]; if(v!=null&&!isNaN(v)) workBuf.push(v); }
+    for(let i=lastRealIdx+1;i<=endIdx;i++){
       const win = workBuf.slice(-3);
       const ma = win.length ? win.reduce((a,b)=>a+b,0)/win.length : 0;
-      proj[i] = ma;
-      workBuf.push(ma); // feed forward
+      proj[i-startIdx] = ma; workBuf.push(ma);
+      _yRangeVals.push(ma);
     }
-    datasets.push({label:'Run-Rate (3M MA)',data:proj,borderColor:'#7BDADA',backgroundColor:'rgba(123,218,218,0.15)',borderDash:[3,3],fill:false,tension:0.32,borderWidth:1.5,pointRadius:2,pointBackgroundColor:'#7BDADA',spanGaps:false});
-  }
-  // FIX: combinar Actuals + Budget + Forecast para el rango del eje Y
-  // (antes solo consideraba Actuals -> la linea de budget se salia del viewport
-  //  cuando estaba muy arriba o abajo)
-  const _yRangeVals = main.slice();
-  if(opts.budget && opts.budget.length){
-    for(let _i=0; _i<opts.budget.length; _i++){
-      const _bv = opts.budget[_i];
-      if(_bv != null && !isNaN(_bv) && _bv !== 0) _yRangeVals.push(_bv);
-    }
-  }
-  if(typeof proj !== 'undefined' && proj && proj.length){
-    for(let _i=0; _i<proj.length; _i++){
-      const _pv = proj[_i];
-      if(_pv != null && !isNaN(_pv)) _yRangeVals.push(_pv);
-    }
+    datasets.push({label:'Run-Rate (3M MA)',data:proj,borderColor:'#7BDADA',backgroundColor:'rgba(123,218,218,0.15)',borderDash:[3,3],fill:false,tension:0.32,borderWidth:1.5,pointRadius:2,pointBackgroundColor:'#7BDADA',spanGaps:false,__noLabels:true});
   }
   let yr=smartYRange(_yRangeVals);
   if(opts.wideY && yr.min !== undefined && yr.max !== undefined){
@@ -2356,52 +2393,34 @@ function makeLineChart(canvasId,label,data,opts){
     y:{min:yr.min,max:yr.max,ticks:{font:{family:'Space Grotesk',size:9},color:'#888',callback:opts.yfmt||undefined},grid:{color:'rgba(0,0,0,0.05)'}}
   };
   if(opts.marginData && opts.marginData.length){
-    // Agregar dataset de margin en eje secundario (yMargin)
-    const mSlice = (opts.marginData||[]).slice(0,MAX_X);
-    // truncar a actuales (LI+1) para no proyectar margen
-    const mFinal = mSlice.map((v,i) => i <= LI ? v : null);
+    const mFinal = []; for(let i=startIdx;i<=endIdx;i++) mFinal.push(i<=lastRealIdx ? opts.marginData[i] : null);
     datasets.push({
-      label:opts.marginLabel||'Margin %',
-      data:mFinal,
-      borderColor:'#117A45',
-      backgroundColor:'transparent',
-      borderDash:[2,3],
-      fill:false,
-      tension:0.30,
-      borderWidth:2,
-      pointRadius:2.5,
-      pointBackgroundColor:'#117A45',
-      pointBorderColor:'#117A45',
-      pointHoverRadius:5,
-      yAxisID:'yMargin'
+      label:opts.marginLabel||'Margin %', data:mFinal,
+      borderColor:'#117A45', backgroundColor:'transparent', borderDash:[2,3],
+      fill:false, tension:0.30, borderWidth:2, pointRadius:2.5,
+      pointBackgroundColor:'#117A45', pointBorderColor:'#117A45', pointHoverRadius:5,
+      yAxisID:'yMargin', __noLabels:true
     });
     const mr = smartYRange(mFinal);
     scales.yMargin = {
-      position:'right',
-      min: mr.min, max: mr.max,
-      ticks:{
-        font:{family:'Space Grotesk',size:9},
-        color:'#117A45',
-        callback:function(v){ return (v).toFixed(0)+'%'; }
-      },
+      position:'right', min: mr.min, max: mr.max,
+      ticks:{ font:{family:'Space Grotesk',size:9}, color:'#117A45', callback:function(v){ return (v).toFixed(0)+'%'; } },
       grid:{display:false}
     };
   }
-  // Formateador de tooltip: usa yfmt si existe (int/pct); si no, max 1 decimal
-  const _tipFmt = (typeof opts.yfmt === 'function')
-    ? opts.yfmt
-    : function(v){ if(v==null||isNaN(v)) return ''; const r=Math.round(v*10)/10; return r.toLocaleString(undefined,{maximumFractionDigits:1}); };
   return new Chart(ctx,{
     type:'line',data:{labels,datasets},
     options:{
       responsive:true,maintainAspectRatio:false,
       interaction:{intersect:false,mode:'index'},
+      layout:{padding:{top:16}},
       plugins:{
         legend:{display:datasets.length>1,position:'bottom',labels:{font:{family:'Space Grotesk',size:10},boxWidth:14,padding:8}},
         tooltip:{enabled:true, callbacks:{label:function(c){ return c.dataset.label+': '+_tipFmt(c.parsed.y); }}}
       },
       scales: scales
-    }
+    },
+    plugins:[lineDataLabelsPlugin]
   });
 }
 
