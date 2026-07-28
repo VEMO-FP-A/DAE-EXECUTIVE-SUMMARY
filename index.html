@@ -781,7 +781,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-07-28 11:11</div>
+  <div>build 2026-07-28 11:20</div>
 </footer>
 
 <script>
@@ -1886,7 +1886,7 @@ function renderRatioCharts(containerId, chartDefs){
     if(cd.tableOnly) return;
     // Combined chart (multiple lines in one)
     if(cd.combined){
-      const stats = cd.combined.map(c => {
+      const stats = cd.stacked100 ? '' : cd.combined.map(c => {
         const A = D[c.k]||[]; const v = sum(A, CUR, CUR);
         return c.l+': '+fmtK(v,1);
       }).join(' · ');
@@ -1956,7 +1956,31 @@ function renderRatioCharts(containerId, chartDefs){
                 x:{stacked:true, ticks:{font:{family:'Space Grotesk',size:9},color:'#888'},grid:{display:false}},
                 y:{stacked:true, min:0, max:1, ticks:{font:{family:'Space Grotesk',size:9},color:'#888', callback:function(v){return (v*100).toFixed(0)+'%';}}, grid:{color:'rgba(0,0,0,0.05)'}}
               }
-            }
+            },
+            plugins:[{
+              // Etiqueta de % centrada en cada segmento de la barra apilada
+              id:'stackPctLabels',
+              afterDatasetsDraw:function(chart){
+                const cx=chart.ctx;
+                cx.save();
+                cx.font='bold 10px "Space Grotesk", sans-serif';
+                cx.textAlign='center';
+                cx.textBaseline='middle';
+                chart.data.datasets.forEach(function(ds,di){
+                  const meta=chart.getDatasetMeta(di);
+                  meta.data.forEach(function(bar,bi){
+                    const v=ds.data[bi];
+                    if(v==null||v<0.06) return; // no etiquetar segmentos muy chicos
+                    const h=Math.abs(bar.base-bar.y);
+                    if(h<12) return;
+                    // Texto blanco sobre teal oscuro, oscuro sobre mint claro
+                    cx.fillStyle = (di===2) ? '#0f3b3b' : '#ffffff';
+                    cx.fillText((v*100).toFixed(0)+'%', bar.x, (bar.y+bar.base)/2);
+                  });
+                });
+                cx.restore();
+              }
+            }]
           });
           return;
         }
