@@ -747,41 +747,41 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
   <div class="var-filters">
     <span class="lbl">Year</span>
     <select id="vf-year"></select>
-    <span class="lbl" style="margin-left:8px">De</span>
+    <span class="lbl" style="margin-left:8px">From</span>
     <select id="vf-from"></select>
-    <span class="lbl">A</span>
+    <span class="lbl">To</span>
     <select id="vf-to"></select>
     <div class="vmode">
       <button class="active" data-mode="mom">MoM</button>
       <button data-mode="yoy">YoY</button>
       <button data-mode="ytd">YTD</button>
       <button data-mode="bud">vs Budget</button>
-      <button data-mode="custom">Custom Meses</button>
+      <button data-mode="custom">Custom Months</button>
     </div>
   </div>
-  <!-- Pickers de meses para Custom (hidden por default) -->
+  <!-- Month pickers for Custom (hidden by default) -->
   <div id="custom-pickers" class="var-filters" style="display:none">
-    <span class="lbl">Mes A</span>
+    <span class="lbl">Month A</span>
     <select id="cmp-a"></select>
-    <span class="lbl" style="margin-left:8px">Mes B</span>
+    <span class="lbl" style="margin-left:8px">Month B</span>
     <select id="cmp-b"></select>
-    <span class="lbl" style="margin-left:8px;color:var(--tx3);font-weight:500">Mostrar:</span>
+    <span class="lbl" style="margin-left:8px;color:var(--tx3);font-weight:500">Show:</span>
     <div class="vmode">
-      <button class="active" data-cmp="abs">$ Absoluto</button>
-      <button data-cmp="pct">% Cambio</button>
+      <button class="active" data-cmp="abs">$ Absolute</button>
+      <button data-cmp="pct">% Change</button>
     </div>
   </div>
   <div id="cmp-table" class="vemo-wrap" style="margin-bottom:24px"></div>
 
 
-  <div class="note">📊 <b>Heatmap</b> — actualmente en modo <b id="hm-mode-lbl">MoM</b>. Cambia el modo arriba para ver YoY o YTD.</div>
+  <div class="note">📊 <b>Heatmap</b> — currently in <b id="hm-mode-lbl">MoM</b> mode. Switch the mode above to see YoY or YTD.</div>
   <div id="heatmap-wrap" class="heatmap-wrap"></div>
   <div id="var-table" class="vemo-wrap"></div>
 </section>
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-07-28 10:59</div>
+  <div>build 2026-07-28 11:11</div>
 </footer>
 
 <script>
@@ -1928,6 +1928,38 @@ function renderRatioCharts(containerId, chartDefs){
         const ctx = document.getElementById(canvasId);
         if(!ctx) return;
         const labels = D.months.map((_,j)=>mlblShort(j));
+        const _isPct = (cd.type === 'pct');
+        // === MODO BARRAS APILADAS AL 100% (proporciones por mes) ===
+        if(cd.stacked100){
+          // Normalizar cada mes para que las 3 series sumen 100% (evita gaps si no cierran exacto)
+          const raw = cd.combined.map(c => (D[c.k]||[]).slice(0, LI+1));
+          const bardata = cd.combined.map((c,ci) => {
+            const arr = [];
+            for(let j=0;j<=LI;j++){
+              let tot=0; for(let s=0;s<raw.length;s++) tot += (+raw[s][j]||0);
+              arr.push(tot>0 ? (+raw[ci][j]||0)/tot : null);
+            }
+            return {
+              label: c.l, data: arr,
+              backgroundColor: c.color, borderColor:'#fff', borderWidth:1,
+              stack:'mix', maxBarThickness:46
+            };
+          });
+          if(ratioCharts[i]) ratioCharts[i].destroy();
+          ratioCharts[i] = new Chart(ctx, {
+            type:'bar', data:{labels:labels.slice(0,LI+1), datasets:bardata},
+            options:{responsive:true, maintainAspectRatio:false,
+              interaction:{intersect:false, mode:'index'},
+              plugins:{legend:{display:true, position:'bottom', labels:{font:{family:'Space Grotesk',size:11}, boxWidth:14, padding:10}},
+                tooltip:{enabled:true, callbacks:{label:function(c){return c.dataset.label+': '+(c.parsed.y*100).toFixed(1)+'%';}}}},
+              scales:{
+                x:{stacked:true, ticks:{font:{family:'Space Grotesk',size:9},color:'#888'},grid:{display:false}},
+                y:{stacked:true, min:0, max:1, ticks:{font:{family:'Space Grotesk',size:9},color:'#888', callback:function(v){return (v*100).toFixed(0)+'%';}}, grid:{color:'rgba(0,0,0,0.05)'}}
+              }
+            }
+          });
+          return;
+        }
         const datasets = cd.combined.map(c => {
           const arr = (D[c.k]||[]).slice(0, LI+1).concat(new Array(Math.max(0, labels.length-LI-1)).fill(null));
           return {
@@ -1938,7 +1970,6 @@ function renderRatioCharts(containerId, chartDefs){
             pointHoverRadius:5
           };
         });
-        const _isPct = (cd.type === 'pct');
         const _yCb = _isPct ? function(v){return (v*100).toFixed(0)+'%';} : function(v){return fmtK(v,1);};
         const _tipCb = _isPct
           ? function(c){return c.dataset.label+': '+(c.parsed.y*100).toFixed(1)+'%';}
@@ -2046,7 +2077,7 @@ const RATIO_CHARTS = {
       {k:'trips_others', l:'Others', color:'#7BDADA'},
     ]},
     // === Chart combinado de SHARE % (3 lineas en un mismo grafico) ===
-    {k:'__COMBINED_TRIPS_PCT__', l:'Service Mix · UberX vs Black vs Others (Share %)', type:'pct', agg:'avg', chartOnly:true, combined:[
+    {k:'__COMBINED_TRIPS_PCT__', l:'Service Mix · Share % (100% stacked)', type:'pct', agg:'avg', chartOnly:true, stacked100:true, combined:[
       {k:'trips_uberx_pct',  l:'UberX %',  color:'#168888'},
       {k:'trips_black_pct',  l:'Black %',  color:'#1F5454'},
       {k:'trips_others_pct', l:'Others %', color:'#7BDADA'},
@@ -3602,7 +3633,7 @@ function chatBotAnswer(q){
   // resumen
   if(/resumen|overview|status|cómo va/.test(lq)){
     const rev=+arr('revenue')[CUR]||0, gp=+arr('gross_profit')[CUR]||0, eb=+arr('ebitda')[CUR]||0, ni=+arr('net_income')[CUR]||0;
-    return '📊 Resumen '+mlblShort(CUR)+':\n• Revenue: '+fmtMm(rev)+'M\n• Gross Profit: '+fmtMm(gp)+'M ('+fmtPct(rev?gp/rev*100:0,1)+')\n• EBITDA: '+fmtMm(eb)+'M ('+fmtPct(rev?eb/rev*100:0,1)+')\n• Net Income: '+fmtMm(ni)+'M ('+fmtPct(rev?ni/rev*100:0,1)+')';
+    return '📊 Summary '+mlblShort(CUR)+':\n• Revenue: '+fmtMm(rev)+'M\n• Gross Profit: '+fmtMm(gp)+'M ('+fmtPct(rev?gp/rev*100:0,1)+')\n• EBITDA: '+fmtMm(eb)+'M ('+fmtPct(rev?eb/rev*100:0,1)+')\n• Net Income: '+fmtMm(ni)+'M ('+fmtPct(rev?ni/rev*100:0,1)+')';
   }
   if(/alert|riesg|warning/.test(lq)){
     const a=[]; const eb=+arr('ebitda')[CUR]||0, ebPrev=+arr('ebitda')[PREV]||0;
@@ -5170,12 +5201,12 @@ function chatBotAnswer(q){
   if(/\b(que recomien|qué recomien|recomienda|recomendaci|sugeri|que deberia|what should we do|next step)\b/i.test(lq)){
     const eb = +arr('ebitda')[CUR]||0, ebB = +barr('ebitda')[CUR]||0;
     const ch = +arr('churn')[CUR]||0;
-    let out = '💡 <b>VEMIA recomienda · ' + mlblShort(CUR) + '</b><br><br>';
-    if(ebB && eb < ebB) out += '1. <b>Cerrar gap de EBITDA</b>: ' + fmtMm(ebB-eb) + 'M debajo de plan. Audit driver payments + marketing efficiency.<br>';
+    let out = '💡 <b>VEMIA recommends · ' + mlblShort(CUR) + '</b><br><br>';
+    if(ebB && eb < ebB) out += '1. <b>Close the EBITDA gap</b>: ' + fmtMm(ebB-eb) + 'M below plan. Audit driver payments + marketing efficiency.<br>';
     if(ch > 0.30) out += '2. <b>Driver retention plan</b>: churn ' + fmtPct(ch*100,1) + ' is critical. Exit interviews + retention bonuses.<br>';
     const pr = +arr('performance_ratio')[CUR]||0;
-    if(pr && pr < 0.80) out += '3. <b>Performance Ratio</b>: ' + fmtPct(pr*100,1) + ' (target ≥80%). Optimizar supply allocation y supply hours.<br>';
-    out += '4. <b>Pricing optimization</b>: revisar mix de servicios (UberX/Black/Flash) para max revenue/hour.<br>';
+    if(pr && pr < 0.80) out += '3. <b>Performance Ratio</b>: ' + fmtPct(pr*100,1) + ' (target ≥80%). Optimize supply allocation and supply hours.<br>';
+    out += '4. <b>Pricing optimization</b>: review service mix (UberX/Black/Flash) to maximize revenue/hour.<br>';
     out += '5. <b>Year-end run-rate</b>: ask me "projected year end ebitda" to see the trajectory.<br>';
     return out;
   }
@@ -5709,7 +5740,7 @@ function setupChat(){
     const div = document.createElement('div');
     div.className = 'chat-msg bot';
     div.style.cssText = 'background:transparent;border:none;padding:4px 0;box-shadow:none;font-size:11px';
-    div.innerHTML = '<div style="font-size:10px;color:var(--tx3);margin-bottom:4px">💡 También puedes preguntar:</div>';
+    div.innerHTML = '<div style="font-size:10px;color:var(--tx3);margin-bottom:4px">💡 You can also ask:</div>';
     chips.forEach(c=>{
       const btn = document.createElement('button');
       btn.textContent = c;
