@@ -781,7 +781,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-07-28 11:20</div>
+  <div>build 2026-07-28 11:29</div>
 </footer>
 
 <script>
@@ -1012,11 +1012,12 @@ function _kpiSparkline(series, budgetSeries, w, h){
     linePath += (started ? 'L' : 'M') + (i*stepX).toFixed(1) + ',' + y(v).toFixed(1) + ' ';
     started = true;
   }
-  // Budget dashed — se dibuja en todo el rango (2025 = actuals, 2026 = budget real)
+  // Budget dashed — SOLO 2026+ (en 2025 el "budget" es igual a los actuals, no aporta)
   let budgetPath = '';
   if(budgetSeries && budgetSeries.length){
     let bs = false;
     for(let i=0; i<n; i++){
+      if(D.months && D.months[i] && D.months[i] < '2026-01') continue;
       const bv = budgetSeries[i]; if(bv == null || isNaN(bv) || bv === 0) continue;
       budgetPath += (bs ? 'L' : 'M') + (i*stepX).toFixed(1) + ',' + y(bv).toFixed(1) + ' ';
       bs = true;
@@ -1049,7 +1050,9 @@ function renderKPICards(){
     const momCls=isNegBetter(momPct)?'neg':'pos';
     const budCls=isNegBetter(budPct)?'neg':'pos';
     const arrSym=momPct==null?'':(momPct>=0?'▲':'▼');
-    const cardCls=isNegBetter(momPct)?'amber':'';
+    // El margen izquierdo se pinta AMBER solo si HAY budget para la metrica Y el actual
+    // esta PEOR que el budget (segun la direccion "mejor" de la metrica). Sin budget = default.
+    const cardCls=(budPct!=null && isNegBetter(budPct))?'amber':'';
 
     // Serie para sparkline
     const spStart = 0;
@@ -2101,7 +2104,7 @@ const RATIO_CHARTS = {
       {k:'trips_others', l:'Others', color:'#7BDADA'},
     ]},
     // === Chart combinado de SHARE % (3 lineas en un mismo grafico) ===
-    {k:'__COMBINED_TRIPS_PCT__', l:'Service Mix · Share % (100% stacked)', type:'pct', agg:'avg', chartOnly:true, stacked100:true, combined:[
+    {k:'__COMBINED_TRIPS_PCT__', l:'Service Mix · Share %', type:'pct', agg:'avg', chartOnly:true, stacked100:true, combined:[
       {k:'trips_uberx_pct',  l:'UberX %',  color:'#168888'},
       {k:'trips_black_pct',  l:'Black %',  color:'#1F5454'},
       {k:'trips_others_pct', l:'Others %', color:'#7BDADA'},
@@ -2262,11 +2265,13 @@ function makeLineChart(canvasId,label,data,opts){
   if(opts.budget&&opts.budget.length&&opts.budget.some(v=>v!=null&&v!==0)){
     let lastB=0; for(let i=0;i<opts.budget.length;i++) if(opts.budget[i]!=null&&opts.budget[i]!==0) lastB=i;
     const maxIdx = Math.min(lastB, MAX_X-1);
-    // Budget en todo el rango: 2025 = actuals (para que se vea valor), 2026 = budget real
+    // Budget SOLO 2026+ (en 2025 el budget = actuals, no aporta graficarlo)
+    let bud2026Start = 0;
+    for(let i=0; i<D.months.length; i++){ if(D.months[i] && D.months[i].startsWith('2026-01')){ bud2026Start=i; break; } }
     const b = [];
     for(let i=0; i<MAX_X; i++){
       const v = opts.budget[i];
-      if(i > maxIdx || v == null || v === 0) b.push(null);
+      if(i < bud2026Start || i > maxIdx || v == null || v === 0) b.push(null);
       else b.push(v);
     }
     datasets.push({label:'Budget',data:b,borderColor:'#1F5454',backgroundColor:'transparent',borderDash:[6,4],fill:false,tension:0.20,borderWidth:1.5,pointRadius:0,pointHoverRadius:3,spanGaps:false});
