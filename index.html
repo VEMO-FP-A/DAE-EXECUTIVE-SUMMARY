@@ -838,7 +838,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-08-03 16:49</div>
+  <div>build 2026-08-03 16:52</div>
 </footer>
 
 <script>
@@ -2263,7 +2263,9 @@ function renderHubsExpense(){
   head+='<th class="gend" style="background:#11ABAB;color:#fff;font-weight:700;font-size:11px;padding:10px 10px;text-align:center;border-right:4px solid #fff">Total</th>';
   let body='';
   hb.lines.forEach(ln=>{
-    let row='<td class="lbl" style="font-weight:500">'+ln.label+'</td>';
+    // Quitar el codigo de cuenta (numeros y guiones) y dejar solo la descripcion
+    const _lbl=(ln.label||'').replace(/^[\d\s\-]+-\s*/,'').trim();
+    let row='<td class="lbl" style="font-weight:500">'+_lbl+'</td>';
     (ln.vals||[]).forEach((v,i)=>{ const gd=(i===months.length-1)?' gend':''; row+='<td class="cur'+gd+'">'+fmtC(v)+'</td>'; });
     row+='<td class="cur gend"><b>'+fmtC(ln.total)+'</b></td>';
     body+='<tr>'+row+'</tr>';
