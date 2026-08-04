@@ -834,7 +834,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-08-04 11:24</div>
+  <div>build 2026-08-04 11:47</div>
 </footer>
 
 <script>
@@ -1339,8 +1339,8 @@ function rowMm(key,label,opts){
   const a_ytd=sum(a,YTD_START,YTD_END);
   const b_ytd=sum(b,YTD_START,YTD_END);
   const d_yoy=a_cur-a_yoy, d_mom=a_cur-a_prev, d_bud=a_cur-b_cur, d_bud_ytd=a_ytd-b_ytd;
-  function cdev(v){ if(v==null||isNaN(v)) return '<td>—</td>'; const nv=opts.invert?-v:v; const cls=nv<0?'neg':(nv>0?'pos':''); return '<td class="'+cls+'">'+fmtMm(v)+'</td>'; }
-  function cpct(v,ref){ if(!ref||isNaN(ref)) return '<td>n.m.</td>'; const p=v/Math.abs(ref)*100; if(p>300||p<-300) return '<td>n.m.</td>'; const nv=opts.invert?-p:p; const cls=nv<0?'neg':(nv>0?'pos':''); return '<td class="'+cls+'">'+fmtPct(p,1)+'</td>'; }
+  function cdev(v){ if(v==null||isNaN(v)) return '<td>—</td>'; const nv=v; const cls=nv<0?'neg':(nv>0?'pos':''); return '<td class="'+cls+'">'+fmtMm(v)+'</td>'; }
+  function cpct(v,ref){ if(!ref||isNaN(ref)) return '<td>n.m.</td>'; const p=v/Math.abs(ref)*100; if(p>300||p<-300) return '<td>n.m.</td>'; const nv=p; const cls=nv<0?'neg':(nv>0?'pos':''); return '<td class="'+cls+'">'+fmtPct(p,1)+'</td>'; }
   const trCls=(opts.subtotal?'subtot ':'')+(opts.exp?'exp ':'')+(opts.child?'child ':'')+(opts.dataset||'');
   const lblCls='lbl'+(opts.indent?' sub':'')+(opts.indent2?' sub2':'')+(opts.indent3?' sub3':'')+(opts.italic?' italic':'');
   // FIX: una fila puede ser HIJA (data-parent) Y a la vez padre de otros (data-id) — antes solo se ponia una de las dos
@@ -1348,8 +1348,8 @@ function rowMm(key,label,opts){
   if(opts.parent) trAttr += 'data-parent="'+opts.parent+'" ';
   if(opts.id)     trAttr += 'data-id="'+opts.id+'" ';
   // Helper: cdev/cpct con flag cur para applicar background mint a las celdas highlighted
-  function cdevCur(v,extra){ extra=extra?(' '+extra):''; if(v==null||isNaN(v)) return '<td class="cur'+extra+'">—</td>'; const nv=opts.invert?-v:v; const cls=nv<0?'neg':(nv>0?'pos':''); return '<td class="cur '+cls+extra+'">'+fmtMm(v)+'</td>'; }
-  function cpctCur(v,ref,extra){ extra=extra?(' '+extra):''; if(!ref||isNaN(ref)) return '<td class="cur'+extra+'">n.m.</td>'; const p=v/Math.abs(ref)*100; if(p>300||p<-300) return '<td class="cur'+extra+'">n.m.</td>'; const nv=opts.invert?-p:p; const cls=nv<0?'neg':(nv>0?'pos':''); return '<td class="cur '+cls+extra+'">'+fmtPct(p,1)+'</td>'; }
+  function cdevCur(v,extra){ extra=extra?(' '+extra):''; if(v==null||isNaN(v)) return '<td class="cur'+extra+'">—</td>'; const nv=v; const cls=nv<0?'neg':(nv>0?'pos':''); return '<td class="cur '+cls+extra+'">'+fmtMm(v)+'</td>'; }
+  function cpctCur(v,ref,extra){ extra=extra?(' '+extra):''; if(!ref||isNaN(ref)) return '<td class="cur'+extra+'">n.m.</td>'; const p=v/Math.abs(ref)*100; if(p>300||p<-300) return '<td class="cur'+extra+'">n.m.</td>'; const nv=p; const cls=nv<0?'neg':(nv>0?'pos':''); return '<td class="cur '+cls+extra+'">'+fmtPct(p,1)+'</td>'; }
   let histCells = '';
   if(PL_SHOW_HISTORIC){
     if(PL_PERIOD_MODE === 'quarterly'){
