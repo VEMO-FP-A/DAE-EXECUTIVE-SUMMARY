@@ -834,7 +834,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-08-10 12:00</div>
+  <div>build 2026-08-10 12:59</div>
 </footer>
 
 <script>
@@ -3201,7 +3201,7 @@ function renderVariationTable(fromIdx,toIdx,mode){
     let yS=0; for(let j=0;j<D.months.length;j++){ if(D.months[j]&&D.months[j].startsWith(yY+'-01')){ yS=j; break; } }
     return [sum(a,yS,idx),sum(a,yS-12,idx-12)];
   }
-  let header='<th class="firstcol" style="text-align:left">Linea</th>';
+  let header='<th class="firstcol" style="text-align:left">Line</th>';
   for(let i=fromIdx;i<=toIdx;i++) header+='<th>'+mlblShort(i)+'</th>';
   let body='';
   lines.forEach(ln=>{
@@ -3210,17 +3210,21 @@ function renderVariationTable(fromIdx,toIdx,mode){
     for(let i=fromIdx;i<=toIdx;i++){
       const r=variation(a,i,ln.k); const cur=r[0], ref=r[1];
       const d=cur-ref;
-      // Signos naturales de P&L: variacion POSITIVA (mas ingreso o menos gasto) = favorable (verde);
-      // NEGATIVA = desfavorable (rojo). Regla universal para todas las lineas (sin invert).
+      // COLOR (favorable/desfavorable) por signo natural de P&L: d>0 favorable (verde), d<0 desfavorable (rojo).
       const cls = d<0 ? 'neg' : (d>0 ? 'pos' : '');
-      const pct=ref?(d/Math.abs(ref))*100:null;
-      // FIX doble parens: usar valor absoluto para % cuando ya va dentro de paren externo
-      const pctStr = pct!=null ? (Math.abs(pct).toFixed(0)+'%') : null;
-      row+='<td class="'+cls+'">'+fmtMm(d)+(pctStr?' <span style="font-size:9.5px;color:var(--tx3)">('+(pct<0?'-':'')+pctStr+')</span>':'')+'</td>';
+      // FLECHA (subio/bajo la linea) por MAGNITUD: |cur|-|ref| > 0 = crecio (▲), < 0 = bajo (▼).
+      // Asi "mas gasto" muestra ▲ aunque el valor natural sea mas negativo.
+      const magChange = Math.abs(cur) - Math.abs(ref);
+      const arrow = magChange>0 ? '▲ ' : (magChange<0 ? '▼ ' : '');
+      // Monto y % en MAGNITUD (positivo); la flecha da la direccion y el color el bueno/malo.
+      const pct = ref ? Math.abs(d/Math.abs(ref)*100) : null;
+      const pctStr = pct!=null ? (pct.toFixed(0)+'%') : null;
+      row+='<td class="'+cls+'">'+arrow+fmtMm(Math.abs(d))+(pctStr?' <span style="font-size:9.5px;color:var(--tx3)">('+pctStr+')</span>':'')+'</td>';
     }
     body+='<tr>'+row+'</tr>';
   });
   tgt.innerHTML='<div class="vemo-section-title" style="font-size:18px">Variation table — '+(mode==='mom'?'MoM':(mode==='yoy'?'YoY':'YTD'))+'</div>'+
+    '<div style="font-size:10.5px;color:var(--tx3);font-style:italic;margin:-6px 0 10px 2px">Note: <b>▲</b> the line went up · <b>▼</b> the line went down (in size). Color = business impact: <span style="color:#168888;font-weight:700">green</span> favorable (more revenue or less expense), <span style="color:#C0392B;font-weight:700">red</span> unfavorable. Amounts &amp; % shown as magnitude.</div>'+
     '<div class="tbl-scroll"><table class="vemo-tbl"><thead><tr class="sub">'+header+'</tr></thead><tbody>'+body+'</tbody></table></div>';
 }
 
