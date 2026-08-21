@@ -330,5 +330,51 @@
    "bud": "<b>(MXN -$2.3m):</b> Driven by (i) lower EBITDA (<b>-$3.2m</b>), (ii) higher D&A (<b>-$0.6m</b>) from vehicle upgrades; partially offset by (iii) lower taxes (<b>+$1.2m</b>), and (iv) lower net interest expense (<b>ca. +$0.3m</b>).",
    "mom": "<b>(MXN -$4.8m):</b> Driven by lower EBITDA (<b>-$4.8m</b>)."
   }
+ },
+ "Jul-26": {
+  "highlights": [
+   {
+    "title": "Revenue Performance",
+    "body": "Closed at <b>MXN $57.7m</b> (-1.6% MoM; <span class='g'>+16.2% vs. Budget</span>), mainly driven by:<br>• <b>Revenue per Hour:</b> -8.5% MoM (MXN $206.7 vs. MXN $225.8), but +9.4% vs. Budget (MXN $206.7 vs. MXN $189.0), on account of (i) a higher price per trip of MXN $143.4 (vs. MXN $132.5 Budget); and (ii) higher Supply Hours of 270.5k (vs. 255.8k Budget)."
+   },
+   {
+    "title": "Active Driver Base",
+    "body": "Grew to <b>1,677 active drivers</b> (<span class='g'>+2.6% MoM</span>; <span class='g'>+14.6% vs. Budget</span>), supported by continued strong hiring (726 hires, <span class='g'>+156.5% vs. Budget</span> of 283)."
+   },
+   {
+    "title": "Performance Ratio",
+    "body": "Improved <span class='g'>+300 bps MoM</span> (73.4% vs. 70.4%), though remained <span class='r'>-460 bps below Budget</span> (73.4% vs. 78.0%). Supply Hours reached 270.5k, <span class='g'>+8.1% MoM</span>."
+   }
+  ],
+  "lowlights": [
+   {
+    "title": "Churn",
+    "body": "Increased sharply to <span class='r'>41.4%</span> (+711 bps MoM vs. 34.3% in June), well <span class='r'>above Budget</span> (19.3%). Consistent with the entry of a larger low-tenure driver cohort following record hiring in June and July."
+   },
+   {
+    "title": "Uber Take Rate",
+    "body": "OPEX impact of <b>MXN ($7.7m)</b>, <span class='r'>-73.1% vs. Budget</span> (MXN ($4.4m)). Reflects the continued erosion of the LTO credit-allocation structure flagged in June, as the fleet covered under the Uber Rebate steps down further ahead of Q3'26."
+   },
+   {
+    "title": "Net Income",
+    "body": "MXN <b>($10.6m)</b>, <span class='r'>-$2.2m below Budget</span> (Budget: ($8.4m)), though roughly in line MoM. EBITDA (<b>($4.2m)</b>) was <span class='r'>-$3.0m below Budget</span>, driven by higher OPEX (<b>-$8.7m vs. Budget</b>) despite the Revenue beat."
+   }
+  ],
+  "pnl_revenue": {
+   "bud": "<b>(MXN +$8.1m):</b> Mainly driven by higher RPH <b>+9.4%</b> (<b>$206.7 vs. $189.0</b>), on account of a higher price per ride <b>+8.2%</b> (<b>$143.4 vs. $132.5</b>), and higher SH <b>+5.8%</b> (<b>270.5k vs. 255.8k</b>).",
+   "mom": "<b>(MXN -$0.9m):</b> Mainly driven by lower price per ride <b>-9.8%</b> (<b>$143.4 vs. $159.0</b>), partially offset by higher SH <b>+8.1%</b> (<b>270.5k vs. 250.3k</b>)."
+  },
+  "pnl_gp": {
+   "bud": "<b>(MXN -$0.7m):</b> Driven by (i) higher Revenue (<b>+$8.1m</b>), more than offset by (ii) higher OPEX (<b>-$8.7m</b>), explained by: (a) higher driver payments (<b>-$2.6m</b>), on account of a higher active driver base (<b>1,677 vs. 1,464 Bud</b>); (b) higher Uber Take Rate (<b>-$3.3m</b>), consistent with the ongoing LTO credit-allocation erosion; and (c) higher marketing expense (<b>-$1.1m</b>), driven by increased lead-generation spend.",
+   "mom": "<b>(MXN -$1.2m):</b> Driven by (i) higher driver payments (<b>-$2.7m</b>), on account of a higher driver base (<b>1,677 vs. 1,634</b>); (ii) the Revenue decline (<b>-$0.9m</b>); partially offset by (iii) lower maintenance expense (<b>+$1.0m</b>), and (iv) lower Uber Take Rate (<b>+$0.7m</b>)."
+  },
+  "pnl_ebitda": {
+   "bud": "<b>(MXN -$3.0m):</b> Driven by (i) lower GP (<b>-$0.7m</b>), and (ii) higher CF & Corp. G&A (<b>-$2.1m</b>); partially offset by (iii) in-line Direct SG&A (<b>-$0.2m</b> vs. Bud).",
+   "mom": "<b>(MXN +$0.1m):</b> Driven by (i) lower Direct SG&A (<b>+$2.1m</b>), mainly due to lower legal and administrative expenses; largely offset by (ii) lower GP (<b>-$1.2m</b>) and (iii) higher CF & Corp. G&A (<b>-$0.8m</b>)."
+  },
+  "pnl_ni": {
+   "bud": "<b>(MXN -$2.2m):</b> Driven by (i) lower EBITDA (<b>-$3.0m</b>); partially offset by (ii) lower taxes (<b>+$1.2m</b>), due to no tax provision this period, and (iii) higher net interest income (<b>+$0.4m</b>); partially offset by (iv) higher D&A (<b>-$0.7m</b>).",
+   "mom": "<b>(MXN -$0.0m):</b> In line MoM, as a slight EBITDA improvement (<b>+$0.1m</b>) was offset by higher D&A (<b>-$0.1m</b>)."
+  }
  }
 }
