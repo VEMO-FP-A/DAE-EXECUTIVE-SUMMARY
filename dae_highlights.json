@@ -335,29 +335,45 @@
   "highlights": [
    {
     "title": "Revenue Performance",
-    "body": "Closed at <b>MXN $57.7m</b> (-1.6% MoM; <span class='g'>+16.2% vs. Budget</span>), mainly driven by:<br>• <b>Revenue per Hour:</b> -8.5% MoM (MXN $206.7 vs. MXN $225.8), but +9.4% vs. Budget (MXN $206.7 vs. MXN $189.0), on account of (i) a higher price per trip of MXN $143.4 (vs. MXN $132.5 Budget); and (ii) higher Supply Hours of 270.5k (vs. 255.8k Budget)."
+    "body": "Closed at <b>MXN $58.6m</b> (<span class='g'>+4.4% MoM</span>; <span class='g'>+22.5% vs. Budget</span>), mainly driven by:<br>• <b>Revenue per Hour:</b> +0.3% MoM (MXN $225.8 vs. MXN $225.0), and +21.2% vs. Budget (MXN $225.8 vs. MXN $186.2), on account of (i) a higher price per trip of MXN $159.0 (vs. MXN $133.5 Budget); and (ii) higher trips per hour of 1.42 (vs. 1.39 Budget)."
    },
    {
-    "title": "Active Driver Base",
-    "body": "Grew to <b>1,677 active drivers</b> (<span class='g'>+2.6% MoM</span>; <span class='g'>+14.6% vs. Budget</span>), supported by continued strong hiring (726 hires, <span class='g'>+156.5% vs. Budget</span> of 283)."
+    "title": "LTO leasing to DAE",
+    "body": "Transitioned the <b>54</b> cumulative vehicles from LTO to DAE, including <b>36</b> GAC AION ES and <b>18</b> BYD D1 units, reflecting an accelerating pace of repossessed-vehicle absorption into active operations. The program converts otherwise idle inventory, previously incurring sunk parking and insurance costs — in addition to losses when either leased again or auctioned — into revenue-generating DAE assets, with continued transitions expected as additional LTO repossessions become available."
    },
    {
-    "title": "Performance Ratio",
-    "body": "Improved <span class='g'>+300 bps MoM</span> (73.4% vs. 70.4%), though remained <span class='r'>-460 bps below Budget</span> (73.4% vs. 78.0%). Supply Hours reached 270.5k, <span class='g'>+8.1% MoM</span>."
+    "title": "VEMO World Cup Initiative",
+    "body": "Successfully executed all 5 World Cup matches held in Mexico City, deploying a 30-vehicle DAE block to Uber's dedicated pickup point at Estadio Azteca for each game. Uber paid US$2,500 per game for the block, equivalent to an effective <b>MXN $314/hr</b>, consistent with the guarantee negotiated ahead of the tournament, and Uber was very pleased with the execution, which ended up generating <b>MXN $237,117</b>. Separately, secured a co-branding agreement covering full vehicle wraps on 5 units at MXN $2,500/unit, a 67% premium over our standard co-branding rate of MXN $1,500."
+   },
+   {
+    "title": "Charger Relocation Proposal",
+    "body": "Evaluating the consolidation of 8 charging units from Artz into San Pedro hub. Artz has structurally underperformed on nightshift fill rate due to limited public transport access in the area, driving persistent driver leakage; San Pedro has already demonstrated stronger fill-rate performance under comparable conditions. Consolidating into a single, larger hub is expected to generate economies of scale, reduce headcount requirements, and improve DAE-wide Performance Ratio by reducing hub-driven attrition. Evaluating potential impact of converting Artz into a RHF site given otherwise onerous cancellation penalties."
+   },
+   {
+    "title": "Samsara",
+    "body": "Completed full Samsara deployment across the fleet, confirming strong performance in event-detection accuracy. As a direct result, reported accident-rate metrics have increased, reflecting more precise incident capture rather than a deterioration in driving behavior. Work is underway to incorporate the Samsara Driver Safety Score into the compensation framework, aligning driver incentives with safety performance and targeting a reduction in at-fault incidents over time."
+   },
+   {
+    "title": "Corporate SG&A Reallocation",
+    "body": "Corporate and cross-functional cost allocation across business lines was rebalanced to reflect actual time and resource demands versus budget. VCN's share rose from 30% to 32%, DAE's from 15% to 20%, with LTO absorbing the corresponding reduction, driven by DAE's larger fleet and LTO's smaller active portfolio."
    }
   ],
   "lowlights": [
    {
+    "title": "Performance Ratio",
+    "body": "Improved <span class='g'>+170 bps MoM</span> (70.4% vs. 68.7%) though <span class='r'>-756 bps vs. Budget</span> (70.4% vs. 78.0%). Supply hours increased +2.7% MoM (250,317 vs. 243,738) and were +0.1% above Budget (250,317 vs. 250,067). The decrease in PR vs Budget was mainly driven by:<br>• <b>Hiring:</b> closed +42.3% MoM in hires (730 vs. 513); the increase was mainly driven by:<br>&nbsp;&nbsp;– <b>Lead quality:</b> Another record month in lead generation, reaching 16,893 leads in June (+17.3% MoM vs. 14,400 in May). Despite record hires, conversion of hire from same-month leads held flat at 1.3% — the same rate as May, against the 2.5% seen in January and February. This confirms the constraint is conversion efficiency, not lead volume: we are generating more leads than we can convert. July's target is to sustain June's lead volume while recovering to Jan/Feb conversion rates of ca. 2.5%."
+   },
+   {
     "title": "Churn",
-    "body": "Increased sharply to <span class='r'>41.4%</span> (+711 bps MoM vs. 34.3% in June), well <span class='r'>above Budget</span> (19.3%). Consistent with the entry of a larger low-tenure driver cohort following record hiring in June and July."
+    "body": "Overall churn increased from <b>31.9%</b> to <b>33.6%</b>, normalized for the transition of 41 DAE drivers to LTO. The increase was mainly driven by higher churn among new drivers, which is consistent with record hiring months and the entry of a larger low-tenure driver cohort."
    },
    {
-    "title": "Uber Take Rate",
-    "body": "OPEX impact of <b>MXN ($7.7m)</b>, <span class='r'>-73.1% vs. Budget</span> (MXN ($4.4m)). Reflects the continued erosion of the LTO credit-allocation structure flagged in June, as the fleet covered under the Uber Rebate steps down further ahead of Q3'26."
+    "title": "Uber Rebate",
+    "body": "The Uber Rebate for DAE ran from Q1'24 through Q1'26, applying a 7.5% take rate to 450 vehicles of the VEMO fleet, subject to LTO's credit allocation (7.5%/450 held at 100% LTO attainment vs. Uber target). In Q2'26, covered fleet dropped from 450 to 300 vehicles, mechanically pushing the implied take rate to 9% on its own; LTO then reached only 78% of its quarterly allocation target, compounding the rate to an implied 11.4% for the quarter, a <span class='r'>MXN $4.8m OPEX impact</span> vs. Q1'26. Budget had assumed renegotiation back to 7.5%/450 terms for Q2'26; that didn't happen, meaning the OPEX offset vs. budget applies from Q2'26 onward, not as a one-time hit. Absent renegotiation, the structure continues to erode: Q3'26 fleet drops to 150 vehicles (implied take rate 14%), and Q4'26 reverts to the pre-2024 baseline of 15%."
    },
    {
-    "title": "Net Income",
-    "body": "MXN <b>($10.6m)</b>, <span class='r'>-$2.2m below Budget</span> (Budget: ($8.4m)), though roughly in line MoM. EBITDA (<b>($4.2m)</b>) was <span class='r'>-$3.0m below Budget</span>, driven by higher OPEX (<b>-$8.7m vs. Budget</b>) despite the Revenue beat."
+    "title": "World Cup Marketplace",
+    "body": "Demand uplift fell short of Uber's forecast, in line with a market-wide miss. Uber projected marketplace growth vs. December '25 of +5% for June and +3% for July; actuals came in below that benchmark, with June RPH -7% vs. forecast and the first two weeks of July -9% vs. forecast. The shortfall mirrors the broader market: Deloitte reported the tournament's economic impact in Mexico landed 7% below its pre-tournament estimate, driven by lower international tourist inflows, shorter average stays, and consumption concentrated only on Mexico's match days, while road closures and mobility restrictions in host cities reduced foot traffic in certain areas. Despite the softer uplift, Ride Hailing Revenue reached <span class='g'>+22.5% vs. budget</span>, confirming the miss is against Uber's optimistic tournament scenario."
    }
   ],
   "pnl_revenue": {
