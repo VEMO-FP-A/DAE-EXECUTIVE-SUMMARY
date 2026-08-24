@@ -833,7 +833,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-08-24 08:03</div>
+  <div>build 2026-08-24 08:48</div>
 </footer>
 
 <script>
@@ -1068,12 +1068,12 @@ function _kpiSparkline(series, budgetSeries, w, h){
     linePath += (started ? 'L' : 'M') + (i*stepX).toFixed(1) + ',' + y(v).toFixed(1) + ' ';
     started = true;
   }
-  // Budget dashed — SOLO 2026+ (en 2025 el "budget" es igual a los actuals, no aporta)
+  // Budget dashed — la serie que llega ya viene recortada a 2026 (spStart=YTD_START),
+  // asi que se grafica tal cual, sin re-filtrar por D.months (indices ya no coinciden).
   let budgetPath = '';
   if(budgetSeries && budgetSeries.length){
     let bs = false;
     for(let i=0; i<n; i++){
-      if(D.months && D.months[i] && D.months[i] < '2026-01') continue;
       const bv = budgetSeries[i]; if(bv == null || isNaN(bv) || bv === 0) continue;
       budgetPath += (bs ? 'L' : 'M') + (i*stepX).toFixed(1) + ',' + y(bv).toFixed(1) + ' ';
       bs = true;
@@ -2844,18 +2844,14 @@ function renderEbitdaBridge(){
   const maintVar     = varCost('maintenance_opex');
   const mktVar       = varCost('marketing');
   const utrVar       = varCost('uber_take_rate');
-  // ΔSG&A = variance del SG&A TOTAL (row 302 en el Excel del usuario):
-  //   Direct Line SG&A + Cross-functional G&A + Corporate Expenses + Corporate Bonus
-  // Usar 'sga_total' si esta extraido; si no, sumar las sub-lineas.
-  let sgaVar;
-  const sgaTotalArrA = arr('sga_total'), sgaTotalArrB = barr('sga_total');
-  if(sgaTotalArrA && sgaTotalArrA.length && sgaTotalArrA.some(v => v != null && v !== 0)){
-    sgaVar = varCost('sga_total');
-  } else {
-    // Fallback: sumar los 4 sub-lineas
-    sgaVar = varCost('direct_line_sga') + varCost('cross_functional_ga') +
-             varCost('corporate_expenses') + varCost('corporate_bonus');
-  }
+  // ΔSG&A se abre en dos bars: Direct Business Line y CF & Corp. G&A (Cross-functional
+  // G&A + Corporate Expenses + Corporate Bonus), para no mezclarlos en un solo bar.
+  const directVar = varCost('direct_line_sga');
+  const cfCorpArrA = arr('cf_corp_ga');
+  const cfCorpVar = (cfCorpArrA && cfCorpArrA.length && cfCorpArrA.some(v => v != null && v !== 0))
+    ? varCost('cf_corp_ga')
+    : (varCost('cross_functional_ga') + varCost('corporate_expenses') + varCost('corporate_bonus'));
+  const sgaVar = directVar + cfCorpVar;
   const opexTotalVar = varCost('opex');
 
   // ΔOther OPEX = residual EXACTO de OPEX que no fue itemizado arriba
@@ -2881,7 +2877,8 @@ function renderEbitdaBridge(){
     {l:'ΔMarketing',      val: mktVar,         type:'var'},
     {l:'ΔUber Take Rate', val: utrVar,         type:'var'},
     {l:'ΔOther OPEX',     val: otherOpexVar,   type:'var'},
-    {l:'ΔSG&A',           val: sgaVar,         type:'var'},
+    {l:'ΔDirect Business Line', val: directVar, type:'var'},
+    {l:'ΔCF & Corp. G&A',       val: cfCorpVar, type:'var'},
   ];
   // NOTA: ΔReconcile removido. Si hay diferencia residual, el ultimo bar
   // (Actual EBITDA) simplemente no coincidira exactamente con la suma.
