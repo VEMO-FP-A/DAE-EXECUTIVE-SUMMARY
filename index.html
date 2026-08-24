@@ -646,7 +646,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 <!-- =================== EXECUTIVE SUMMARY =================== -->
 <section class="section active" data-s="exec">
   <div id="kpi-cards-grid" class="kpi-grid"></div>
-  <div style="font-size:10.5px;color:var(--tx3);font-style:italic;margin:-6px 0 8px 0;letter-spacing:0.02em">View: <b>Managerial View</b> (Net Income and EBITDA use Cross-Functional G&amp;A + Corporate Expenses allocation, vs. Accounting's Corporate G&amp;A)</div>
+  <div style="font-size:10.5px;color:var(--tx3);font-style:italic;margin:-6px 0 8px 0;letter-spacing:0.02em">View: <b>Managerial View</b></div>
   <!-- Chart full-width con dropdown para elegir KPI -->
   <div class="chart-card" style="margin-bottom:22px">
     <div class="chart-hd" style="gap:12px">
@@ -833,7 +833,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-08-24 07:53</div>
+  <div>build 2026-08-24 08:03</div>
 </footer>
 
 <script>
@@ -1047,7 +1047,9 @@ function _kpiSparkline(series, budgetSeries, w, h){
     ? budgetSeries.filter(v => v != null && !isNaN(v) && v !== 0)
     : [];
   const allVals = vals.concat(budVals);
-  const mn = Math.min.apply(null, allVals), mx = Math.max.apply(null, allVals);
+  // Eje Y siempre desde cero (no acotado al rango de datos) para no exagerar
+  // visualmente movimientos pequenos como si fueran muy volatiles.
+  const mn = Math.min(0, Math.min.apply(null, allVals)), mx = Math.max.apply(null, allVals);
   const range = mx - mn || 1;
   const n = series.length;
   const stepX = n > 1 ? w / (n - 1) : w;
