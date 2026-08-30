@@ -831,7 +831,7 @@ footer.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--b);font-
 
 <footer class="foot">
   <div>VEMO · DAE · Strictly Private &amp; Confidential</div>
-  <div>build 2026-08-30 12:18</div>
+  <div>build 2026-08-30 12:23</div>
 </footer>
 
 <script>
@@ -2127,7 +2127,12 @@ function renderRatioCharts(containerId, chartDefs){
         const raw = arr(cd.marginKey);
         if(raw && raw.length){
           // Truncar a solo actuales (0..LI) para no proyectar % en meses futuros
-          mArr = raw.slice(0, LI+1).map(v => v==null ? null : (+v||0));
+          mArr = raw.slice(0, LI+1).map(v => {
+            if(v == null) return null;
+            const num = +v || 0;
+            // Si viene como ratio (<=1.5), multiplicar x100; si ya es %, usar tal cual
+            return Math.abs(num) <= 1.5 ? num*100 : num;
+          });
         }
       }
       const _hk = (cd.keys||[cd.k]);
@@ -2631,7 +2636,10 @@ function makeLineChart(canvasId,label,data,opts){
       layout:{padding:{top:16}},
       plugins:{
         legend:{display:datasets.length>1,position:'bottom',labels:{font:{family:'Space Grotesk',size:10},boxWidth:14,padding:8}},
-        tooltip:{enabled:true, callbacks:{label:function(c){ return c.dataset.label+': '+_tipFmt(c.parsed.y); }}}
+        tooltip:{enabled:true, callbacks:{label:function(c){
+          if(c.dataset.yAxisID==='yMargin') return c.dataset.label+': '+(c.parsed.y).toFixed(1)+'%';
+          return c.dataset.label+': '+_tipFmt(c.parsed.y);
+        }}}
       },
       scales: scales
     },
